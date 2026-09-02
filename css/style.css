@@ -557,6 +557,51 @@ select[aria-invalid="true"] {
   font-style: italic;
 }
 
+.bid-card__credibility {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eceef0;
+}
+
+.verification-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.verification-badge--verified {
+  background-color: #e6f2ff;
+  color: #004a99;
+}
+
+.verification-badge--pending {
+  background-color: #fff4e0;
+  color: #7a4a00;
+}
+
+.bid-card__rating {
+  font-size: 0.9rem;
+  color: #515154;
+}
+
+.bid-card__feedback {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: #515154;
+}
+
+.bid-card__actions {
+  margin: 0.25rem 0 0 0;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr;

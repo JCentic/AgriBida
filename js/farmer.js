@@ -374,6 +374,75 @@ function initListingForm() {
 // ---------- Listing Detail — bids received ----------
 // renderListingDetail / renderListingImages (shared with buyer.js) live in ui.js.
 
+// Verification status gets its own badge, styled distinctly from the bid's own
+// status badge, so the farmer never confuses buyer trustworthiness with bid outcome.
+function verificationBadgeModifier(verificationStatus) {
+  return verificationStatus === "Verified Buyer" ? "verification-badge--verified" : "verification-badge--pending";
+}
+
+function buildBuyerCredibilityHTML(profile) {
+  if (!profile) return "";
+  const feedbackItems = (profile.feedback || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  return `
+    <div class="bid-card__credibility">
+      <span class="verification-badge ${verificationBadgeModifier(profile.verificationStatus)}">${escapeHtml(profile.verificationStatus)}</span>
+      <span class="bid-card__rating">${profile.rating.toFixed(1)} &#9733; (${profile.reviewCount} review${profile.reviewCount === 1 ? "" : "s"})</span>
+      ${feedbackItems ? `<ul class="bid-card__feedback">${feedbackItems}</ul>` : ""}
+    </div>
+  `;
+}
+
+// Renders the listing's sample market-price range once, above the bid list, next to
+// the farmer's own preferred price (FR-10's "one view" requirement). Prefers a record
+// matching both produce and location, falling back to a produce-only match.
+function renderListingPriceSummary(listing) {
+  const container = document.getElementById("listing-price-summary-container");
+  if (!container) return;
+
+  const records = getMarketPriceRecords().filter((record) => record.produceName === listing.produceName);
+  const record = records.find((item) => item.location === listing.location) || records[0];
+
+  if (!record) {
+    container.innerHTML = '<p class="empty-state">No sample market-price data is available for this produce yet.</p>';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="price-summary-row">
+      <span class="price-summary-row__produce">Your preferred price</span>
+      <span class="price-summary-row__range">${formatCurrency(listing.preferredPrice)} / ${escapeHtml(listing.unit)}</span>
+    </div>
+    <div class="price-summary-row">
+      <span class="price-summary-row__produce">Sample market price &middot; ${escapeHtml(record.location)}</span>
+      <span class="price-summary-row__range">Low ${formatCurrency(record.lowPrice)} &middot; Avg ${formatCurrency(record.averagePrice)} &middot; High ${formatCurrency(record.highPrice)} / ${escapeHtml(record.unit)}</span>
+    </div>
+  `;
+}
+
+function handleSelectBid(listing, bid) {
+  const confirmed = window.confirm(
+    `Select this bid (${formatCurrency(bid.offeredPrice)} / ${listing.unit})? This can't be undone from here.`
+  );
+  if (!confirmed) return;
+
+  const bids = getBids();
+  bids.forEach((item) => {
+    if (item.listingId !== listing.id) return;
+    item.status = item.id === bid.id ? "Selected" : "Not Selected";
+  });
+  saveBids(bids);
+
+  const listings = getListings();
+  const listingIndex = listings.findIndex((item) => item.id === listing.id);
+  listings[listingIndex] = { ...listings[listingIndex], status: "Selected", selectedBidId: bid.id };
+  saveListings(listings);
+
+  const updatedListing = listings[listingIndex];
+  renderListingDetail(updatedListing);
+  renderListingBids(updatedListing);
+  showNotification("Bid selected. The listing is now marked Selected.");
+}
+
 function renderListingBids(listing) {
   const container = document.getElementById("bids-list-container");
   const bids = getBids()
@@ -392,7 +461,22 @@ function renderListingBids(listing) {
     const buyer = buyerProfiles.find((profile) => profile.id === bid.buyerId);
     const card = document.createElement("article");
     card.className = "card bid-card";
-    card.innerHTML = buildBidCardHTML(buyer ? buyer.businessName : "Unknown buyer", bid, listing.unit);
+    card.innerHTML =
+      buildBidCardHTML(buyer ? buyer.businessName : "Unknown buyer", bid, listing.unit) +
+      buildBuyerCredibilityHTML(buyer);
+
+    if (listing.status === "Open" && bid.status === "Pending") {
+      const actions = document.createElement("p");
+      actions.className = "bid-card__actions";
+      const selectBtn = document.createElement("button");
+      selectBtn.type = "button";
+      selectBtn.className = "btn btn--primary btn--small";
+      selectBtn.textContent = "Select Bid";
+      selectBtn.addEventListener("click", () => handleSelectBid(listing, bid));
+      actions.appendChild(selectBtn);
+      card.appendChild(actions);
+    }
+
     container.appendChild(card);
   });
 }
@@ -417,6 +501,7 @@ function initListingDetails() {
 
     renderListingDetail(listing);
     renderListingImages(listing);
+    renderListingPriceSummary(listing);
     renderListingBids(listing);
     return;
   }
