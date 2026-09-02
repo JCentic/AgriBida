@@ -17,38 +17,12 @@ const LISTING_FIELD_IDS = {
 // ---------- Listing photos (optional, up to MAX_LISTING_IMAGES) ----------
 // Stored as base64 data URLs in local storage since there is no server to upload to;
 // each photo is downscaled/compressed client-side first to stay well under the
-// browser's local storage quota. MAX_LISTING_IMAGES is defined in ui.js, shared
-// with the gallery/carousel threshold there.
-
-const MAX_IMAGE_DIMENSION = 800;
-const IMAGE_JPEG_QUALITY = 0.72;
+// browser's local storage quota. MAX_LISTING_IMAGES and readAndResizeImage() are
+// defined in ui.js, shared with the gallery/carousel threshold and the buyer
+// verification document upload there.
 
 // The photos currently attached to the listing form, in memory until the form saves.
 let listingImages = [];
-
-// Reads an image file and returns a downscaled/compressed JPEG data URL.
-function readAndResizeImage(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(reader.error || new Error("Could not read the file."));
-    reader.onload = () => {
-      const image = new Image();
-      image.onerror = () => reject(new Error("Could not read the photo."));
-      image.onload = () => {
-        const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(image.width, image.height));
-        const width = Math.round(image.width * scale);
-        const height = Math.round(image.height * scale);
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        canvas.getContext("2d").drawImage(image, 0, 0, width, height);
-        resolve(canvas.toDataURL("image/jpeg", IMAGE_JPEG_QUALITY));
-      };
-      image.src = reader.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
 // ---------- Farmer Dashboard ----------
 

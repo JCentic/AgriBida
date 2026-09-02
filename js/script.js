@@ -196,6 +196,10 @@ function createAccount(values) {
       rating: 0,
       reviewCount: 0,
       feedback: [],
+      verificationDocument: null,
+      verificationSubmittedAt: null,
+      verificationRequestReason: null,
+      verificationNote: null,
     });
   }
 
@@ -243,11 +247,8 @@ function handleRegisterSubmit(event) {
 // ---------- RBAC routing ----------
 
 // RBAC entry point: stores the signed-in user, then routes to the role's dashboard.
-// The farmer dashboard exists, so farmer sign-ins navigate there directly. Buyer and
-// Administrator dashboards aren't built yet, so those roles still just confirm sign-in
-// and name the future destination.
 function routeToDashboard(user) {
-  if (user.role === "farmer" || user.role === "buyer") {
+  if (user.role === "farmer" || user.role === "buyer" || user.role === "administrator") {
     window.location.href = ROLE_DASHBOARDS[user.role];
     return;
   }

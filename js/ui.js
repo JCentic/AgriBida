@@ -9,6 +9,37 @@
 // threshold below.
 const MAX_LISTING_IMAGES = 3;
 
+// ---------- Image resize/compress helper ----------
+// Shared by listing photos (farmer.js) and the buyer verification document upload
+// (buyer.js): reads a selected image file and returns a downscaled/compressed JPEG
+// data URL sized to stay well under the browser's local storage quota.
+
+const MAX_IMAGE_DIMENSION = 800;
+const IMAGE_JPEG_QUALITY = 0.72;
+
+function readAndResizeImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error || new Error("Could not read the file."));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("Could not read the photo."));
+      image.onload = () => {
+        const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(image.width, image.height));
+        const width = Math.round(image.width * scale);
+        const height = Math.round(image.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", IMAGE_JPEG_QUALITY));
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 // ---------- Formatting ----------
 
 function escapeHtml(value) {
