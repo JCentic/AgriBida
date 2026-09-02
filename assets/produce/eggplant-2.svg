@@ -1,0 +1,15 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample photo of two eggplants side by side">
+  <rect width="400" height="300" rx="24" fill="#efe9f5"/>
+  <g transform="translate(140,175) rotate(-8)">
+    <ellipse cx="0" cy="0" rx="55" ry="78" fill="#532c5e"/>
+    <ellipse cx="-18" cy="-30" rx="14" ry="34" fill="#84549a" opacity="0.5"/>
+    <rect x="-8" y="-108" width="14" height="26" rx="6" fill="#4c8c4c"/>
+    <path d="M0 -84 q-24 -10 -34 4 q18 -3 34 5 q16 -8 34 -5 q-10 -14 -34 -4 Z" fill="#5a9a56"/>
+  </g>
+  <g transform="translate(255,190) rotate(6)">
+    <ellipse cx="0" cy="0" rx="62" ry="86" fill="#61306d"/>
+    <ellipse cx="-20" cy="-34" rx="16" ry="38" fill="#8a5a97" opacity="0.5"/>
+    <rect x="-8" y="-118" width="16" height="28" rx="6" fill="#4c8c4c"/>
+    <path d="M0 -92 q-26 -11 -37 4 q19 -3 37 6 q18 -9 37 -6 q-11 -15 -37 -4 Z" fill="#5a9a56"/>
+  </g>
+</svg>

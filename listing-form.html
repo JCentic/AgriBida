@@ -69,6 +69,18 @@
           <p class="field-error" id="listing-date-error" role="alert"></p>
         </div>
 
+        <fieldset class="field field--fieldset">
+          <legend>Photos (optional)</legend>
+          <p class="field-hint">Add up to 3 photos. Adding real photos helps buyers trust your listing and can lead to better offers.</p>
+          <div class="image-upload">
+            <input type="file" id="listing-images-input" class="visually-hidden" accept="image/*" multiple />
+            <label for="listing-images-input" class="btn btn--secondary btn--small image-upload__label">Add Photos</label>
+            <span class="image-upload__count" id="listing-images-count">0/3 photos added</span>
+          </div>
+          <div class="image-preview-grid" id="listing-images-preview"></div>
+          <p class="field-error" id="listing-images-error" role="alert"></p>
+        </fieldset>
+
         <p class="form-error" id="listing-form-error" role="alert"></p>
 
         <div class="form-actions">

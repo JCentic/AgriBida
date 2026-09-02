@@ -1,0 +1,20 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample photo of tomatoes">
+  <rect width="400" height="300" rx="24" fill="#fdf3ea"/>
+  <ellipse cx="200" cy="180" rx="95" ry="88" fill="#d63a24"/>
+  <ellipse cx="168" cy="148" rx="28" ry="20" fill="#ef6a52" opacity="0.55"/>
+  <g transform="translate(200,96)">
+    <ellipse rx="15" ry="8" fill="#4c8c4c" transform="rotate(0)"/>
+    <ellipse rx="15" ry="8" fill="#4c8c4c" transform="rotate(72)"/>
+    <ellipse rx="15" ry="8" fill="#4c8c4c" transform="rotate(144)"/>
+    <ellipse rx="15" ry="8" fill="#4c8c4c" transform="rotate(216)"/>
+    <ellipse rx="15" ry="8" fill="#4c8c4c" transform="rotate(288)"/>
+    <circle r="7" fill="#3a6b3a"/>
+  </g>
+  <ellipse cx="305" cy="230" rx="34" ry="30" fill="#d63a24" opacity="0.9"/>
+  <g transform="translate(305,207)">
+    <ellipse rx="8" ry="5" fill="#4c8c4c" transform="rotate(0)"/>
+    <ellipse rx="8" ry="5" fill="#4c8c4c" transform="rotate(90)"/>
+    <ellipse rx="8" ry="5" fill="#4c8c4c" transform="rotate(180)"/>
+    <ellipse rx="8" ry="5" fill="#4c8c4c" transform="rotate(270)"/>
+  </g>
+</svg>

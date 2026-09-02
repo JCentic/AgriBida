@@ -92,6 +92,11 @@ const SAMPLE_PRODUCE_LISTINGS = [
     availabilityDate: "2026-09-10",
     status: "Open",
     selectedBidId: null,
+    images: [
+      "assets/produce/tomato-1.svg",
+      "assets/produce/tomato-2.svg",
+      "assets/produce/tomato-3.svg",
+    ],
   },
   {
     id: "listing-002",
@@ -104,6 +109,11 @@ const SAMPLE_PRODUCE_LISTINGS = [
     availabilityDate: "2026-09-15",
     status: "Open",
     selectedBidId: null,
+    images: [
+      "assets/produce/eggplant-1.svg",
+      "assets/produce/eggplant-2.svg",
+      "assets/produce/eggplant-3.svg",
+    ],
   },
 ];
 

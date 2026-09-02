@@ -12,6 +12,42 @@ const LISTING_FIELD_IDS = {
   availabilityDate: "listing-date",
 };
 
+// ---------- Listing photos (optional, up to MAX_LISTING_IMAGES) ----------
+// Stored as base64 data URLs in local storage since there is no server to upload to;
+// each photo is downscaled/compressed client-side first to stay well under the
+// browser's local storage quota.
+
+const MAX_LISTING_IMAGES = 3;
+const MAX_IMAGE_DIMENSION = 800;
+const IMAGE_JPEG_QUALITY = 0.72;
+
+// The photos currently attached to the listing form, in memory until the form saves.
+let listingImages = [];
+
+// Reads an image file and returns a downscaled/compressed JPEG data URL.
+function readAndResizeImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error || new Error("Could not read the file."));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("Could not read the photo."));
+      image.onload = () => {
+        const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(image.width, image.height));
+        const width = Math.round(image.width * scale);
+        const height = Math.round(image.height * scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", IMAGE_JPEG_QUALITY));
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 // ---------- Small shared formatting helpers ----------
 
 function escapeHtml(value) {
@@ -71,9 +107,13 @@ function renderFarmerListings(user) {
 
   container.innerHTML = "";
   listings.forEach((listing) => {
+    const coverImage = listing.images && listing.images.length > 0
+      ? `<img class="listing-card__thumb" src="${escapeHtml(listing.images[0])}" alt="${escapeHtml(listing.produceName)} photo" />`
+      : "";
     const card = document.createElement("article");
     card.className = "card listing-card";
     card.innerHTML = `
+      ${coverImage}
       <div class="listing-card__title-row">
         <h4 class="listing-card__title">${escapeHtml(listing.produceName)}</h4>
         <span class="status-badge ${statusBadgeClass(listing.status)}">${escapeHtml(listing.status)}</span>
@@ -197,6 +237,71 @@ function validateListingForm(values) {
   return errors;
 }
 
+function renderImagePreviews() {
+  const container = document.getElementById("listing-images-preview");
+  const input = document.getElementById("listing-images-input");
+  const label = document.querySelector('label[for="listing-images-input"]');
+  const count = document.getElementById("listing-images-count");
+  if (!container || !input) return;
+
+  container.innerHTML = "";
+  listingImages.forEach((src, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "image-preview";
+
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = `Photo ${index + 1}`;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "image-preview__remove";
+    removeBtn.setAttribute("aria-label", `Remove photo ${index + 1}`);
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", () => {
+      listingImages.splice(index, 1);
+      renderImagePreviews();
+    });
+
+    wrapper.append(img, removeBtn);
+    container.appendChild(wrapper);
+  });
+
+  const atMax = listingImages.length >= MAX_LISTING_IMAGES;
+  input.disabled = atMax;
+  if (label) label.classList.toggle("is-disabled", atMax);
+  if (count) count.textContent = `${listingImages.length}/${MAX_LISTING_IMAGES} photos added`;
+}
+
+async function handleImagesSelected(event) {
+  const files = Array.from(event.target.files || []);
+  const errorEl = document.getElementById("listing-images-error");
+  errorEl.textContent = "";
+  if (files.length === 0) return;
+
+  const remainingSlots = MAX_LISTING_IMAGES - listingImages.length;
+  const filesToAdd = files.slice(0, remainingSlots);
+  if (files.length > filesToAdd.length) {
+    errorEl.textContent = `Only ${MAX_LISTING_IMAGES} photos are allowed; the rest were not added.`;
+  }
+
+  for (const file of filesToAdd) {
+    if (!file.type.startsWith("image/")) {
+      errorEl.textContent = "Only image files can be added.";
+      continue;
+    }
+    try {
+      const dataUrl = await readAndResizeImage(file);
+      listingImages.push(dataUrl);
+    } catch (error) {
+      errorEl.textContent = "One of the selected photos could not be added.";
+    }
+  }
+
+  event.target.value = "";
+  renderImagePreviews();
+}
+
 function populateListingForm(listing) {
   document.getElementById("listing-produce-name").value = listing.produceName;
   document.getElementById("listing-quantity").value = listing.quantity;
@@ -247,6 +352,7 @@ function handleListingFormSubmit(event, user, editingListing) {
       location,
       preferredPrice,
       availabilityDate: values.availabilityDate,
+      images: [...listingImages],
     };
     saveListings(listings);
     window.location.href = `listing-details.html?id=${encodeURIComponent(editingListing.id)}&saved=1`;
@@ -264,6 +370,7 @@ function handleListingFormSubmit(event, user, editingListing) {
     availabilityDate: values.availabilityDate,
     status: "Open",
     selectedBidId: null,
+    images: [...listingImages],
   };
   listings.push(newListing);
   saveListings(listings);
@@ -281,6 +388,8 @@ function initListingForm() {
   const listingId = params.get("id");
   let editingListing = null;
 
+  listingImages = [];
+
   if (listingId) {
     const listing = getListings().find((item) => item.id === listingId);
     if (!listing || listing.farmerId !== user.profileId) {
@@ -288,12 +397,16 @@ function initListingForm() {
       return;
     }
     editingListing = listing;
+    listingImages = [...(listing.images || [])];
 
     document.getElementById("form-heading").textContent = "Edit Produce Listing";
     document.getElementById("form-subtitle").textContent = "Update the details below.";
     document.getElementById("listing-submit-btn").textContent = "Save Changes";
     populateListingForm(editingListing);
   }
+
+  document.getElementById("listing-images-input").addEventListener("change", handleImagesSelected);
+  renderImagePreviews();
 
   form.addEventListener("submit", (event) => handleListingFormSubmit(event, user, editingListing));
 }
@@ -332,6 +445,104 @@ function renderListingDetail(listing) {
     dd.textContent = value;
     item.append(dt, dd);
     grid.appendChild(item);
+  });
+}
+
+// Builds a swipeable/scroll-snap carousel (track + prev/next buttons + dots) for a
+// listing that has a full set of photos — a static grid gets cramped at 3 across,
+// especially on mobile, so a full set is worth browsing one at a time instead.
+function buildImageCarousel(listing, images) {
+  const carousel = document.createElement("div");
+  carousel.className = "image-carousel";
+
+  const track = document.createElement("div");
+  track.className = "image-carousel__track";
+  track.setAttribute("tabindex", "0");
+  track.setAttribute("role", "group");
+  track.setAttribute("aria-roledescription", "carousel");
+  track.setAttribute("aria-label", `${listing.produceName} photos, ${images.length} total`);
+
+  images.forEach((src, index) => {
+    const slide = document.createElement("div");
+    slide.className = "image-carousel__slide";
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = `${listing.produceName} photo ${index + 1} of ${images.length}`;
+    slide.appendChild(img);
+    track.appendChild(slide);
+  });
+
+  const dots = document.createElement("div");
+  dots.className = "image-carousel__dots";
+  const dotButtons = images.map((_, index) => {
+    const dot = document.createElement("button");
+    dot.type = "button";
+    dot.className = "image-carousel__dot";
+    if (index === 0) dot.classList.add("is-active");
+    dot.setAttribute("aria-label", `Go to photo ${index + 1}`);
+    dot.addEventListener("click", () => goToSlide(index));
+    dots.appendChild(dot);
+    return dot;
+  });
+
+  function goToSlide(index) {
+    const clamped = Math.max(0, Math.min(images.length - 1, index));
+    track.scrollTo({ left: track.clientWidth * clamped, behavior: "smooth" });
+  }
+
+  const prevBtn = document.createElement("button");
+  prevBtn.type = "button";
+  prevBtn.className = "image-carousel__nav image-carousel__nav--prev";
+  prevBtn.setAttribute("aria-label", "Previous photo");
+  prevBtn.textContent = "‹";
+  prevBtn.addEventListener("click", () => {
+    goToSlide(Math.round(track.scrollLeft / track.clientWidth) - 1);
+  });
+
+  const nextBtn = document.createElement("button");
+  nextBtn.type = "button";
+  nextBtn.className = "image-carousel__nav image-carousel__nav--next";
+  nextBtn.setAttribute("aria-label", "Next photo");
+  nextBtn.textContent = "›";
+  nextBtn.addEventListener("click", () => {
+    goToSlide(Math.round(track.scrollLeft / track.clientWidth) + 1);
+  });
+
+  track.addEventListener("scroll", () => {
+    const current = Math.round(track.scrollLeft / track.clientWidth);
+    dotButtons.forEach((dot, index) => dot.classList.toggle("is-active", index === current));
+  });
+
+  carousel.append(track, prevBtn, nextBtn, dots);
+  return carousel;
+}
+
+function renderListingImages(listing) {
+  const container = document.getElementById("listing-images-gallery");
+  if (!container) return;
+
+  const images = listing.images || [];
+  if (images.length === 0) {
+    container.className = "";
+    container.innerHTML = '<p class="empty-state">No photos added for this listing yet.</p>';
+    return;
+  }
+
+  if (images.length >= MAX_LISTING_IMAGES) {
+    container.className = "";
+    container.innerHTML = "";
+    container.appendChild(buildImageCarousel(listing, images));
+    return;
+  }
+
+  container.className = "image-gallery";
+  container.innerHTML = "";
+  images.forEach((src, index) => {
+    const img = document.createElement("img");
+    img.className = "image-gallery__img";
+    img.src = src;
+    img.alt = `${listing.produceName} photo ${index + 1}`;
+    container.appendChild(img);
   });
 }
 
@@ -383,6 +594,7 @@ function initListingDetails() {
   }
 
   renderListingDetail(listing);
+  renderListingImages(listing);
   renderListingBids(listing);
 }
 
