@@ -82,12 +82,45 @@ label:focus-within {
   font-style: italic;
 }
 
+.site-nav__content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 1rem;
+}
+
+.site-nav__user {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-right: auto;
+}
+
+.site-nav__link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0071e3;
+  text-decoration: none;
+}
+
+.site-nav__link:hover {
+  text-decoration: underline;
+}
+
+.site-nav__signout {
+  font-size: 0.9rem;
+}
+
 .site-main {
   padding: 1.5rem 1rem;
   max-width: 960px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
+}
+
+.site-main--wide {
+  max-width: 1100px;
 }
 
 .site-footer {
@@ -271,12 +304,293 @@ select[aria-invalid="true"] {
   width: 100%;
 }
 
+/* ---------- Buttons (secondary / small) ---------- */
+.btn--secondary {
+  background-color: #ffffff;
+  color: #0071e3;
+  border-color: #0071e3;
+}
+
+.btn--secondary:hover {
+  background-color: #f0f7ff;
+}
+
+.btn--small {
+  padding: 0.45rem 0.9rem;
+  min-height: 36px;
+  font-size: 0.85rem;
+}
+
+.btn--danger-text {
+  color: #d70015;
+}
+
+/* ---------- General page layout (dashboard / form / detail pages) ---------- */
+.page {
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h2 {
+  font-size: 1.5rem;
+}
+
+.page-subtitle {
+  color: #86868b;
+  font-size: 0.95rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.page-section {
+  margin-bottom: 2rem;
+}
+
+.page-section h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.85rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0071e3;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Cards used on dashboard / detail pages ---------- */
+.card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+  padding: 1.25rem 1.5rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.listing-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.listing-card__title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.listing-card__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.listing-card__meta {
+  margin: 0;
+  color: #515154;
+  font-size: 0.9rem;
+}
+
+.listing-card__link {
+  align-self: flex-start;
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0071e3;
+  text-decoration: none;
+}
+
+.listing-card__link:hover {
+  text-decoration: underline;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.status-badge--open {
+  background-color: #e8f8ec;
+  color: #1e4620;
+}
+
+.status-badge--selected {
+  background-color: #fff4e0;
+  color: #7a4a00;
+}
+
+.status-badge--closed {
+  background-color: #f0f0f2;
+  color: #515154;
+}
+
+.bid-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #eceef0;
+}
+
+.bid-summary-row:last-child {
+  border-bottom: none;
+}
+
+.bid-summary-row__buyer {
+  font-weight: 600;
+}
+
+.bid-summary-row__meta {
+  color: #86868b;
+  font-size: 0.85rem;
+}
+
+.price-summary-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #eceef0;
+}
+
+.price-summary-row:last-child {
+  border-bottom: none;
+}
+
+.price-summary-row__produce {
+  font-weight: 600;
+}
+
+.price-summary-row__range {
+  color: #515154;
+  font-size: 0.9rem;
+}
+
+.bid-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bid-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.bid-card__buyer {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.bid-card__price {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1e4620;
+}
+
+.bid-card__meta {
+  margin: 0;
+  color: #515154;
+  font-size: 0.9rem;
+}
+
+.bid-card__message {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #1d1d1f;
+  font-style: italic;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem 1.5rem;
+}
+
+.detail-item dt {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #86868b;
+  margin-bottom: 0.15rem;
+}
+
+.detail-item dd {
+  margin: 0;
+  font-size: 1rem;
+  color: #1d1d1f;
+}
+
+.empty-state {
+  color: #86868b;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
+.detail-actions {
+  margin: 1rem 0 0 0;
+}
+
+.form-card {
+  max-width: 520px;
+}
+
+.form-card .field {
+  margin-bottom: 1.1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.form-actions .btn {
+  flex: 1;
+}
+
 /* ---------- Tablet and up ---------- */
 @media (min-width: 600px) {
   .site-header__bar {
     flex-direction: row;
     align-items: baseline;
     justify-content: space-between;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -288,5 +602,13 @@ select[aria-invalid="true"] {
 
   .auth-card {
     padding: 2.5rem 2.25rem;
+  }
+
+  .card-grid--listings {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }

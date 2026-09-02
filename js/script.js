@@ -243,16 +243,71 @@ function handleRegisterSubmit(event) {
 // ---------- RBAC routing ----------
 
 // RBAC entry point: stores the signed-in user, then routes to the role's dashboard.
-// Dashboards aren't built yet, so this currently just confirms sign-in and names the
-// future destination. Once a dashboard page exists for a role, replace the
-// showNotification() call below with something like:
-//   window.location.href = ROLE_DASHBOARDS[role];
+// The farmer dashboard exists, so farmer sign-ins navigate there directly. Buyer and
+// Administrator dashboards aren't built yet, so those roles still just confirm sign-in
+// and name the future destination.
 function routeToDashboard(user) {
+  if (user.role === "farmer") {
+    window.location.href = ROLE_DASHBOARDS.farmer;
+    return;
+  }
+
   const destination = ROLE_DASHBOARDS[user.role];
   showNotification(
     `Welcome, ${user.name}. You're signed in as ${ROLE_LABELS[user.role]}. ` +
       `(The ${ROLE_LABELS[user.role]} dashboard isn't built yet — it will open ${destination}.)`
   );
+}
+
+// Route guard for role-specific pages: redirects to the sign-in page and returns null
+// when no user is signed in or the signed-in user has a different role; otherwise
+// returns the signed-in user so the calling page can render with it.
+function requireRole(expectedRole) {
+  const user = getCurrentUser();
+  if (!user || user.role !== expectedRole) {
+    window.location.href = "index.html";
+    return null;
+  }
+  return user;
+}
+
+// ---------- Shared navigation & sign out ----------
+
+function handleSignOut() {
+  clearCurrentUser();
+  window.location.href = "index.html";
+}
+
+// Fills the shared nav bar with the signed-in user's name/role, a dashboard link, and
+// a Sign Out action. Falls back to the placeholder text when no one is signed in.
+function renderSiteNav() {
+  const container = document.getElementById("site-nav-content");
+  if (!container) return;
+
+  const user = getCurrentUser();
+  if (!user) {
+    container.innerHTML = '<p class="site-nav__placeholder">Navigation appears here after you sign in.</p>';
+    return;
+  }
+
+  container.innerHTML = "";
+
+  const info = document.createElement("span");
+  info.className = "site-nav__user";
+  info.textContent = `${user.name} · ${ROLE_LABELS[user.role]}`;
+
+  const dashboardLink = document.createElement("a");
+  dashboardLink.className = "site-nav__link";
+  dashboardLink.href = ROLE_DASHBOARDS[user.role];
+  dashboardLink.textContent = "Dashboard";
+
+  const signOutBtn = document.createElement("button");
+  signOutBtn.type = "button";
+  signOutBtn.className = "link-btn site-nav__signout";
+  signOutBtn.textContent = "Sign Out";
+  signOutBtn.addEventListener("click", handleSignOut);
+
+  container.append(info, dashboardLink, signOutBtn);
 }
 
 // ---------- Page init ----------
@@ -272,5 +327,6 @@ function initAuthPage() {
 // App entry point: seed sample data, then set up the current page.
 document.addEventListener("DOMContentLoaded", () => {
   seedStorageIfEmpty();
+  renderSiteNav();
   initAuthPage();
 });
