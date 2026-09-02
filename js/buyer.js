@@ -1,10 +1,9 @@
 // buyer.js
 // Buyer-facing page logic: dashboard (browse/filter open listings), the buyer's bid
 // relationship shown on listing-details.html, the bid form, and My Bids. Shared
-// auth/storage/nav logic stays in script.js and storage.js; shared display helpers
-// (escapeHtml, formatCurrency, formatDateTime, formatDateOnly, statusBadgeClass,
-// renderListingDetail, renderListingImages) are defined as globals in farmer.js and
-// reused here as-is.
+// auth/storage/nav logic stays in script.js and storage.js; shared formatting and
+// listing/bid-card/photo markup shared with farmer.js lives in ui.js and is reused
+// here as-is.
 
 // Maps bid form field names to their input element ids.
 const BID_FIELD_IDS = {
@@ -93,23 +92,13 @@ function renderBuyerListings(produceFilter, locationFilter) {
   container.innerHTML = "";
   filtered.forEach((listing) => {
     const farmer = farmerProfiles.find((profile) => profile.id === listing.farmerId);
-    const coverImage = listing.images && listing.images.length > 0
-      ? `<img class="listing-card__thumb" src="${escapeHtml(listing.images[0])}" alt="${escapeHtml(listing.produceName)} photo" />`
-      : "";
-    const card = document.createElement("article");
-    card.className = "card listing-card";
-    card.innerHTML = `
-      ${coverImage}
-      <div class="listing-card__title-row">
-        <h4 class="listing-card__title">${escapeHtml(listing.produceName)}</h4>
-        <span class="status-badge ${statusBadgeClass(listing.status)}">${escapeHtml(listing.status)}</span>
-      </div>
-      <p class="listing-card__meta">${listing.quantity} ${escapeHtml(listing.unit)} &middot; ${escapeHtml(listing.location)}</p>
-      <p class="listing-card__meta">Preferred price: ${formatCurrency(listing.preferredPrice)} / ${escapeHtml(listing.unit)}</p>
-      <p class="listing-card__meta">Farmer: ${escapeHtml(farmer ? farmer.farmName : "Unknown farm")}</p>
-      <a class="listing-card__link" href="listing-details.html?id=${encodeURIComponent(listing.id)}">View Details &rarr;</a>
-    `;
-    container.appendChild(card);
+    container.appendChild(
+      buildListingCard(listing, {
+        extraMetaHTML: `<p class="listing-card__meta">Farmer: ${escapeHtml(farmer ? farmer.farmName : "Unknown farm")}</p>`,
+        linkHref: `listing-details.html?id=${encodeURIComponent(listing.id)}`,
+        linkText: "View Details",
+      })
+    );
   });
 }
 
@@ -134,14 +123,7 @@ function renderBuyerBidSection(user, listing) {
     }
 
     container.innerHTML = `
-      <article class="card bid-card">
-        <div class="bid-card__header">
-          <h4 class="bid-card__buyer">Your Offer</h4>
-          <span class="bid-card__price">${formatCurrency(bid.offeredPrice)} / ${escapeHtml(listing.unit)}</span>
-        </div>
-        <p class="bid-card__meta">Requested quantity: ${bid.requestedQuantity} ${escapeHtml(listing.unit)} &middot; Submitted ${formatDateTime(bid.submittedAt)} &middot; Status: ${escapeHtml(bid.status)}</p>
-        ${bid.message ? `<p class="bid-card__message">&ldquo;${escapeHtml(bid.message)}&rdquo;</p>` : ""}
-      </article>
+      <article class="card bid-card">${buildBidCardHTML("Your Offer", bid, listing.unit)}</article>
       <p class="detail-actions"><a href="${bidFormLink}" class="btn btn--secondary btn--small">Update Bid</a></p>
     `;
     return;
@@ -159,14 +141,7 @@ function renderBuyerBidSection(user, listing) {
     : "This listing is no longer open. Your bid was not selected.";
 
   container.innerHTML = `
-    <article class="card bid-card">
-      <div class="bid-card__header">
-        <h4 class="bid-card__buyer">Your Offer</h4>
-        <span class="bid-card__price">${formatCurrency(bid.offeredPrice)} / ${escapeHtml(listing.unit)}</span>
-      </div>
-      <p class="bid-card__meta">Requested quantity: ${bid.requestedQuantity} ${escapeHtml(listing.unit)} &middot; Submitted ${formatDateTime(bid.submittedAt)} &middot; Status: ${escapeHtml(bid.status)}</p>
-      ${bid.message ? `<p class="bid-card__message">&ldquo;${escapeHtml(bid.message)}&rdquo;</p>` : ""}
-    </article>
+    <article class="card bid-card">${buildBidCardHTML("Your Offer", bid, listing.unit)}</article>
     <p class="status-note">${outcomeNote}</p>
   `;
 }
