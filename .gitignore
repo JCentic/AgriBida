@@ -1,0 +1,15 @@
+# Planning docs and agent instructions — kept locally, not tracked in the repo
+AGENTS.md
+CLAUDE.md
+plans/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
