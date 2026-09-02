@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriBida — Sign In</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Shared header: app name -->
+  <header class="site-header">
+    <div class="site-header__bar">
+      <h1 class="site-header__title">AgriBida</h1>
+      <p class="site-header__tagline">Produce bidding &amp; price transparency for Filipino farmers</p>
+    </div>
+  </header>
+
+  <!-- Placeholder navigation area, filled in once role dashboards are built -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <p class="site-nav__placeholder">Navigation appears here after you sign in.</p>
+  </nav>
+
+  <!-- Main content area: unified authentication screen (sign in + registration) -->
+  <main class="site-main" id="main-content">
+    <section class="auth-card" aria-labelledby="auth-heading">
+      <div class="auth-mark" aria-hidden="true">A</div>
+      <h2 id="auth-heading">Sign in to AgriBida</h2>
+      <p class="auth-subtitle" id="auth-subtitle">Enter your account details to continue.</p>
+
+      <!-- Sign In form -->
+      <form id="signin-form" class="auth-form" novalidate>
+        <div class="field">
+          <label for="signin-email">Email</label>
+          <input type="email" id="signin-email" name="email" autocomplete="email" aria-describedby="signin-email-error" />
+          <p class="field-error" id="signin-email-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="signin-password">Password</label>
+          <input type="password" id="signin-password" name="password" autocomplete="current-password" aria-describedby="signin-password-error" />
+          <p class="field-error" id="signin-password-error" role="alert"></p>
+        </div>
+
+        <p class="form-error" id="signin-form-error" role="alert"></p>
+
+        <button type="submit" class="btn btn--primary btn--block">Sign In</button>
+      </form>
+
+      <!-- Create Account form -->
+      <form id="register-form" class="auth-form" novalidate hidden>
+        <div class="field">
+          <label for="register-name">Full name</label>
+          <input type="text" id="register-name" name="name" autocomplete="name" aria-describedby="register-name-error" />
+          <p class="field-error" id="register-name-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="register-email">Email</label>
+          <input type="email" id="register-email" name="email" autocomplete="email" aria-describedby="register-email-error" />
+          <p class="field-error" id="register-email-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="register-location">Location</label>
+          <input type="text" id="register-location" name="location" autocomplete="address-level2" aria-describedby="register-location-error" />
+          <p class="field-error" id="register-location-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="register-role">I am a</label>
+          <select id="register-role" name="role" aria-describedby="register-role-error">
+            <option value="" selected>Select a role</option>
+            <option value="farmer">Farmer</option>
+            <option value="buyer">Buyer</option>
+          </select>
+          <p class="field-error" id="register-role-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="register-roledetail" id="register-roledetail-label">Farm or business name</label>
+          <input type="text" id="register-roledetail" name="roleDetail" aria-describedby="register-roledetail-error" />
+          <p class="field-error" id="register-roledetail-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" name="password" autocomplete="new-password" aria-describedby="register-password-error" />
+          <p class="field-error" id="register-password-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="register-confirm-password">Confirm password</label>
+          <input type="password" id="register-confirm-password" name="confirmPassword" autocomplete="new-password" aria-describedby="register-confirm-password-error" />
+          <p class="field-error" id="register-confirm-password-error" role="alert"></p>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block">Create Account</button>
+      </form>
+
+      <p class="auth-toggle">
+        <span data-mode="signin">New here? <button type="button" id="show-register-btn" class="link-btn">Create an account</button></span>
+        <span data-mode="register" hidden>Already have an account? <button type="button" id="show-signin-btn" class="link-btn">Sign in</button></span>
+      </p>
+    </section>
+  </main>
+
+  <!-- Footer / notification area -->
+  <footer class="site-footer">
+    <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>
