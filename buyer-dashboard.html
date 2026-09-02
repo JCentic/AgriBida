@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgriBida — Listing Details</title>
+  <title>AgriBida — Buyer Dashboard</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -24,38 +24,35 @@
 
   <main class="site-main site-main--wide" id="main-content">
     <div class="page">
-      <a href="farmer-dashboard.html" class="back-link" id="listing-back-link">&larr; Back to Dashboard</a>
-
       <div class="page-header">
         <div>
-          <h2 id="listing-title">Listing</h2>
-          <p class="page-subtitle" id="listing-subtitle"></p>
+          <h2>Buyer Dashboard</h2>
+          <p class="page-subtitle">Browse open produce listings and track your bids.</p>
         </div>
-        <span class="status-badge" id="listing-status-badge"></span>
+        <a href="my-bids.html" class="btn btn--primary">My Bids</a>
       </div>
 
-      <section class="page-section">
-        <div class="card">
-          <dl class="detail-grid" id="listing-detail-grid"></dl>
-        </div>
-        <p class="detail-actions" id="listing-farmer-actions">
-          <a href="listing-form.html" id="listing-edit-link" class="btn btn--secondary btn--small">Edit Listing</a>
-        </p>
+      <section class="page-section" aria-labelledby="profile-heading">
+        <h3 id="profile-heading">Your Profile</h3>
+        <div class="card profile-summary" id="buyer-profile-summary"></div>
       </section>
 
-      <section class="page-section" aria-labelledby="photos-heading">
-        <h3 id="photos-heading">Photos</h3>
-        <div id="listing-images-gallery"></div>
-      </section>
+      <section class="page-section" aria-labelledby="listings-heading">
+        <h3 id="listings-heading">Open Listings</h3>
 
-      <section class="page-section" aria-labelledby="bids-heading" id="farmer-bids-section">
-        <h3 id="bids-heading">Bids Received</h3>
-        <div id="bids-list-container"></div>
-      </section>
+        <form class="filter-bar" aria-label="Filter open listings">
+          <div class="filter-field">
+            <label for="buyer-filter-produce">Produce type</label>
+            <select id="buyer-filter-produce"></select>
+          </div>
+          <div class="filter-field">
+            <label for="buyer-filter-location">Location</label>
+            <input type="text" id="buyer-filter-location" placeholder="e.g. Nueva Ecija" />
+          </div>
+        </form>
+        <p class="filter-match-count" id="buyer-listings-match-count" aria-live="polite"></p>
 
-      <section class="page-section" aria-labelledby="buyer-bid-heading" id="buyer-bid-section" hidden>
-        <h3 id="buyer-bid-heading">Your Bid</h3>
-        <div id="buyer-bid-container"></div>
+        <div class="card-grid card-grid--listings" id="buyer-listings-container"></div>
       </section>
     </div>
   </main>

@@ -247,8 +247,8 @@ function handleRegisterSubmit(event) {
 // Administrator dashboards aren't built yet, so those roles still just confirm sign-in
 // and name the future destination.
 function routeToDashboard(user) {
-  if (user.role === "farmer") {
-    window.location.href = ROLE_DASHBOARDS.farmer;
+  if (user.role === "farmer" || user.role === "buyer") {
+    window.location.href = ROLE_DASHBOARDS[user.role];
     return;
   }
 
@@ -265,6 +265,18 @@ function routeToDashboard(user) {
 function requireRole(expectedRole) {
   const user = getCurrentUser();
   if (!user || user.role !== expectedRole) {
+    window.location.href = "index.html";
+    return null;
+  }
+  return user;
+}
+
+// Route guard for pages shared by more than one role (e.g. listing-details.html):
+// redirects to the sign-in page and returns null when no user is signed in or the
+// signed-in user's role isn't in expectedRoles; otherwise returns the signed-in user.
+function requireAnyRole(expectedRoles) {
+  const user = getCurrentUser();
+  if (!user || !expectedRoles.includes(user.role)) {
     window.location.href = "index.html";
     return null;
   }

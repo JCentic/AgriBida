@@ -217,7 +217,8 @@ input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="number"],
-input[type="date"] {
+input[type="date"],
+textarea {
   font: inherit;
   font-size: 1rem;
   padding: 0.7rem 0.85rem;
@@ -230,12 +231,18 @@ input[type="date"] {
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
+textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
 select:hover,
 input[type="text"]:hover,
 input[type="email"]:hover,
 input[type="password"]:hover,
 input[type="number"]:hover,
-input[type="date"]:hover {
+input[type="date"]:hover,
+textarea:hover {
   border-color: #86868b;
 }
 
@@ -783,6 +790,65 @@ select[aria-invalid="true"] {
 
 .form-card .field {
   margin-bottom: 1.1rem;
+}
+
+.bid-form-context {
+  margin: 0 0 1.5rem 0;
+  padding: 1rem 1.1rem;
+  background-color: #f5f5f7;
+  border-radius: 12px;
+}
+
+/* ---------- Buyer profile summary (buyer-dashboard.html) ---------- */
+.profile-summary__name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.profile-summary__meta {
+  margin: 0.2rem 0 0 0;
+  color: #515154;
+  font-size: 0.9rem;
+}
+
+.profile-summary__rating {
+  color: #7a4a00;
+  font-weight: 600;
+}
+
+/* ---------- Filter bar (buyer-dashboard.html) ---------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1 1 200px;
+}
+
+.filter-field label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1d1d1f;
+}
+
+.filter-match-count {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  color: #86868b;
+}
+
+/* ---------- Read-only status note (buyer's bid on a Selected/Closed listing) ---------- */
+.status-note {
+  margin: 0 0 0.75rem 0;
+  color: #515154;
+  font-size: 0.95rem;
 }
 
 .form-actions {

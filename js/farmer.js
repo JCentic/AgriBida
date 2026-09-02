@@ -577,25 +577,51 @@ function renderListingBids(listing) {
 }
 
 function initListingDetails() {
-  const user = requireRole("farmer");
+  const user = requireAnyRole(["farmer", "buyer"]);
   if (!user) return;
 
   const params = new URLSearchParams(window.location.search);
   const listingId = params.get("id");
   const listing = getListings().find((item) => item.id === listingId);
 
-  if (!listing || listing.farmerId !== user.profileId) {
-    window.location.href = "farmer-dashboard.html";
+  if (user.role === "farmer") {
+    if (!listing || listing.farmerId !== user.profileId) {
+      window.location.href = "farmer-dashboard.html";
+      return;
+    }
+
+    if (params.get("saved") === "1") {
+      showNotification("Listing changes saved.");
+    }
+
+    renderListingDetail(listing);
+    renderListingImages(listing);
+    renderListingBids(listing);
     return;
   }
 
-  if (params.get("saved") === "1") {
-    showNotification("Listing changes saved.");
+  // Buyer branch: any signed-in buyer may view any listing, with no ownership check,
+  // and sees only their own bid relationship to it rather than the farmer's full list.
+  if (!listing) {
+    window.location.href = "buyer-dashboard.html";
+    return;
+  }
+
+  document.getElementById("listing-back-link").href = "buyer-dashboard.html";
+  document.getElementById("listing-farmer-actions").hidden = true;
+  document.getElementById("farmer-bids-section").hidden = true;
+  document.getElementById("buyer-bid-section").hidden = false;
+
+  if (params.get("bidSaved") === "1") {
+    showNotification("Your bid has been saved.");
+  }
+  if (params.get("blocked") === "notopen") {
+    showNotification("This listing is no longer open, so bids can't be submitted or changed.");
   }
 
   renderListingDetail(listing);
   renderListingImages(listing);
-  renderListingBids(listing);
+  renderBuyerBidSection(user, listing);
 }
 
 // ---------- Page init ----------

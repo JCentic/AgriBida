@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriBida — Place or Update a Bid</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Shared header: app name -->
+  <header class="site-header">
+    <div class="site-header__bar">
+      <h1 class="site-header__title">AgriBida</h1>
+      <p class="site-header__tagline">Produce bidding &amp; price transparency for Filipino farmers</p>
+    </div>
+  </header>
+
+  <!-- Shared navigation area: populated by renderSiteNav() in js/script.js -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="site-nav__content" id="site-nav-content">
+      <p class="site-nav__placeholder">Navigation appears here after you sign in.</p>
+    </div>
+  </nav>
+
+  <main class="site-main" id="main-content">
+    <section class="auth-card form-card" aria-labelledby="form-heading">
+      <h2 id="form-heading">Place a Bid</h2>
+      <p class="auth-subtitle" id="form-subtitle">Offer a price and quantity for this listing.</p>
+
+      <dl class="detail-grid bid-form-context">
+        <div class="detail-item">
+          <dt>Produce</dt>
+          <dd id="bid-form-produce"></dd>
+        </div>
+        <div class="detail-item">
+          <dt>Farmer's preferred price</dt>
+          <dd id="bid-form-price"></dd>
+        </div>
+      </dl>
+
+      <form id="bid-form" class="auth-form" novalidate>
+        <div class="field">
+          <label for="bid-price">Offered price (₱ per unit)</label>
+          <input type="number" id="bid-price" name="offeredPrice" step="any" aria-describedby="bid-price-error" />
+          <p class="field-error" id="bid-price-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="bid-quantity">Requested quantity</label>
+          <input type="number" id="bid-quantity" name="requestedQuantity" step="any" aria-describedby="bid-quantity-error" />
+          <p class="field-error" id="bid-quantity-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="bid-message">Message (optional)</label>
+          <textarea id="bid-message" name="message" rows="3"></textarea>
+        </div>
+
+        <p class="form-error" id="bid-form-error" role="alert"></p>
+
+        <div class="form-actions">
+          <a href="buyer-dashboard.html" class="btn btn--secondary btn--block">Cancel</a>
+          <button type="submit" class="btn btn--primary btn--block" id="bid-submit-btn">Submit Bid</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer / notification area -->
+  <footer class="site-footer">
+    <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/farmer.js"></script>
+  <script src="js/buyer.js"></script>
+</body>
+</html>
