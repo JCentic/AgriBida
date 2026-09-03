@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriBida — Settings</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Shared header: app name -->
+  <header class="site-header">
+    <div class="site-header__bar">
+      <h1 class="site-header__title">AgriBida</h1>
+      <p class="site-header__tagline">Produce bidding &amp; price transparency for Filipino farmers</p>
+    </div>
+  </header>
+
+  <!-- Shared navigation area: populated by renderSiteNav() in js/script.js -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="site-nav__content" id="site-nav-content">
+      <p class="site-nav__placeholder">Navigation appears here after you sign in.</p>
+    </div>
+  </nav>
+
+  <main class="site-main" id="main-content">
+    <section class="auth-card form-card" aria-labelledby="settings-heading">
+      <h2 id="settings-heading">Settings</h2>
+      <p class="auth-subtitle">Update your display name and location.</p>
+
+      <form id="settings-form" class="auth-form" novalidate>
+        <div class="field">
+          <label for="settings-name">Name</label>
+          <input type="text" id="settings-name" name="name" aria-describedby="settings-name-error" />
+          <p class="field-error" id="settings-name-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="settings-location">Location</label>
+          <input type="text" id="settings-location" name="location" aria-describedby="settings-location-error" />
+          <p class="field-error" id="settings-location-error" role="alert"></p>
+        </div>
+
+        <div class="field">
+          <label for="settings-email">Email</label>
+          <input type="email" id="settings-email" name="email" disabled />
+          <p class="field-hint">Your sign-in email can't be changed here.</p>
+        </div>
+
+        <p class="form-error" id="settings-form-error" role="alert"></p>
+
+        <div class="form-actions">
+          <a href="profile.html" class="btn btn--secondary btn--block">Cancel</a>
+          <button type="submit" class="btn btn--primary btn--block" id="settings-submit-btn">Save Changes</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer / notification area -->
+  <footer class="site-footer">
+    <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

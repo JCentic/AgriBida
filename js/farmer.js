@@ -348,11 +348,7 @@ function initListingForm() {
 // ---------- Listing Detail — bids received ----------
 // renderListingDetail / renderListingImages (shared with buyer.js) live in ui.js.
 
-// Verification status gets its own badge, styled distinctly from the bid's own
-// status badge, so the farmer never confuses buyer trustworthiness with bid outcome.
-function verificationBadgeModifier(verificationStatus) {
-  return verificationStatus === "Verified Buyer" ? "verification-badge--verified" : "verification-badge--pending";
-}
+// verificationBadgeModifier() lives in ui.js (shared with profile.js).
 
 function buildBuyerCredibilityHTML(profile) {
   if (!profile) return "";

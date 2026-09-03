@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgriBida — Buyer Dashboard</title>
+  <title>AgriBida — Profile</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -22,32 +22,23 @@
     </div>
   </nav>
 
-  <main class="site-main site-main--wide" id="main-content">
+  <main class="site-main" id="main-content">
     <div class="page">
       <div class="page-header">
         <div>
-          <h2>Buyer Dashboard</h2>
-          <p class="page-subtitle">Browse open produce listings and track your bids.</p>
+          <h2>Profile</h2>
+          <p class="page-subtitle">Your account details and sample credibility record.</p>
         </div>
-        <a href="my-bids.html" class="btn btn--primary">My Bids</a>
       </div>
 
-      <section class="page-section" aria-labelledby="listings-heading">
-        <h3 id="listings-heading">Open Listings</h3>
+      <section class="page-section" aria-labelledby="account-heading">
+        <h3 id="account-heading">Account</h3>
+        <div class="card profile-summary" id="profile-account-card"></div>
+      </section>
 
-        <form class="filter-bar" aria-label="Filter open listings">
-          <div class="filter-field">
-            <label for="buyer-filter-produce">Produce type</label>
-            <select id="buyer-filter-produce"></select>
-          </div>
-          <div class="filter-field">
-            <label for="buyer-filter-location">Location</label>
-            <input type="text" id="buyer-filter-location" placeholder="e.g. Nueva Ecija" />
-          </div>
-        </form>
-        <p class="filter-match-count" id="buyer-listings-match-count" aria-live="polite"></p>
-
-        <div class="card-grid card-grid--listings" id="buyer-listings-container"></div>
+      <section class="page-section" id="profile-role-section" aria-labelledby="role-heading" hidden>
+        <h3 id="role-heading"></h3>
+        <div class="card profile-summary" id="profile-role-card"></div>
       </section>
     </div>
   </main>
@@ -61,7 +52,6 @@
   <script src="js/storage.js"></script>
   <script src="js/script.js"></script>
   <script src="js/ui.js"></script>
-  <script src="js/farmer.js"></script>
-  <script src="js/buyer.js"></script>
+  <script src="js/profile.js"></script>
 </body>
 </html>

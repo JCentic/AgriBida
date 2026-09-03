@@ -17,6 +17,13 @@ const MAX_LISTING_IMAGES = 3;
 const MAX_IMAGE_DIMENSION = 800;
 const IMAGE_JPEG_QUALITY = 0.72;
 
+// Verification status gets its own badge, styled distinctly from a bid's own status
+// badge, so a reader never confuses buyer trustworthiness with bid outcome. Shared by
+// farmer.js (buyer credibility on a bid) and profile.js (the buyer's own profile page).
+function verificationBadgeModifier(verificationStatus) {
+  return verificationStatus === "Verified Buyer" ? "verification-badge--verified" : "verification-badge--pending";
+}
+
 function readAndResizeImage(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
