@@ -104,9 +104,9 @@ const SAMPLE_PRODUCE_LISTINGS = [
     status: "Open",
     selectedBidId: null,
     images: [
-      "assets/produce/tomato-1.svg",
-      "assets/produce/tomato-2.svg",
-      "assets/produce/tomato-3.svg",
+      "../assets/produce/tomato-1.svg",
+      "../assets/produce/tomato-2.svg",
+      "../assets/produce/tomato-3.svg",
     ],
   },
   {
@@ -121,9 +121,9 @@ const SAMPLE_PRODUCE_LISTINGS = [
     status: "Open",
     selectedBidId: null,
     images: [
-      "assets/produce/eggplant-1.svg",
-      "assets/produce/eggplant-2.svg",
-      "assets/produce/eggplant-3.svg",
+      "../assets/produce/eggplant-1.svg",
+      "../assets/produce/eggplant-2.svg",
+      "../assets/produce/eggplant-3.svg",
     ],
   },
 ];

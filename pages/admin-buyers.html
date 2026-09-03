@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgriBida — Farmer Dashboard</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <title>AgriBida — Buyer Verification &amp; Reputation</title>
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
   <!-- Shared header: app name -->
@@ -24,27 +24,17 @@
 
   <main class="site-main site-main--wide" id="main-content">
     <div class="page">
+      <a href="admin-dashboard.html" class="back-link">&larr; Back to Dashboard</a>
       <div class="page-header">
         <div>
-          <h2>Farmer Dashboard</h2>
-          <p class="page-subtitle">A summary of your listings, recent bids, and sample market prices.</p>
+          <h2>Buyer Verification &amp; Reputation</h2>
+          <p class="page-subtitle">Review each sample buyer's trust profile. Buyers awaiting verification are listed first.</p>
         </div>
-        <a href="listing-form.html" class="btn btn--primary">Create Listing</a>
       </div>
 
-      <section class="page-section" aria-labelledby="listings-heading">
-        <h3 id="listings-heading">Your Listings</h3>
-        <div class="card-grid card-grid--listings" id="listings-container"></div>
-      </section>
-
-      <section class="page-section" aria-labelledby="bids-heading">
-        <h3 id="bids-heading">Recent Bids</h3>
-        <div class="card" id="recent-bids-container"></div>
-      </section>
-
-      <section class="page-section" aria-labelledby="prices-heading">
-        <h3 id="prices-heading">Sample Market Prices</h3>
-        <div class="card" id="price-summary-container"></div>
+      <section class="page-section" aria-labelledby="admin-buyers-heading">
+        <h3 id="admin-buyers-heading" class="visually-hidden">Buyers</h3>
+        <div class="card-grid" id="admin-buyers-container"></div>
       </section>
     </div>
   </main>
@@ -54,10 +44,11 @@
     <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
   </footer>
 
-  <script src="js/data.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/farmer.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/script.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/farmer.js"></script>
+  <script src="../js/admin.js"></script>
 </body>
 </html>

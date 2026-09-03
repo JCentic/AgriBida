@@ -25,6 +25,13 @@ const ROLE_SHORTCUTS = {
   administrator: { label: "Manage Buyers", href: "admin-buyers.html" },
 };
 
+// All dashboard/profile/settings/etc. pages live in pages/; only index.html sits at
+// the site root. These helpers let shared code (routing, nav links) resolve the right
+// relative path regardless of which depth the current page is running from.
+const IS_ROOT = !location.pathname.includes("/pages/");
+const toPage = (file) => (IS_ROOT ? `pages/${file}` : file);
+const toRoot = (file) => (IS_ROOT ? file : `../${file}`);
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Maps registration field names to their input element ids.
@@ -257,11 +264,11 @@ function handleRegisterSubmit(event) {
 // RBAC entry point: stores the signed-in user, then routes to the role's dashboard.
 function routeToDashboard(user) {
   if (user.role === "farmer" || user.role === "buyer" || user.role === "administrator") {
-    window.location.href = ROLE_DASHBOARDS[user.role];
+    window.location.href = toPage(ROLE_DASHBOARDS[user.role]);
     return;
   }
 
-  const destination = ROLE_DASHBOARDS[user.role];
+  const destination = toPage(ROLE_DASHBOARDS[user.role]);
   showNotification(
     `Welcome, ${user.name}. You're signed in as ${ROLE_LABELS[user.role]}. ` +
       `(The ${ROLE_LABELS[user.role]} dashboard isn't built yet — it will open ${destination}.)`
@@ -274,7 +281,7 @@ function routeToDashboard(user) {
 function requireRole(expectedRole) {
   const user = getCurrentUser();
   if (!user || user.role !== expectedRole) {
-    window.location.href = "index.html";
+    window.location.href = toRoot("index.html");
     return null;
   }
   return user;
@@ -286,7 +293,7 @@ function requireRole(expectedRole) {
 function requireAnyRole(expectedRoles) {
   const user = getCurrentUser();
   if (!user || !expectedRoles.includes(user.role)) {
-    window.location.href = "index.html";
+    window.location.href = toRoot("index.html");
     return null;
   }
   return user;
@@ -296,7 +303,7 @@ function requireAnyRole(expectedRoles) {
 
 function handleSignOut() {
   clearCurrentUser();
-  window.location.href = "index.html";
+  window.location.href = toRoot("index.html");
 }
 
 // Builds the initials shown on the profile avatar, e.g. "Metro Fresh Produce" -> "MF".
@@ -329,10 +336,10 @@ function renderSiteNav() {
       </button>
       <div class="nav-profile__menu" id="nav-profile-menu" role="menu" hidden>
         <p class="nav-profile__menu-heading">${escapeHtml(user.name)} &middot; ${escapeHtml(ROLE_LABELS[user.role])}</p>
-        <a class="nav-profile__menu-item" role="menuitem" href="${ROLE_DASHBOARDS[user.role]}">Dashboard</a>
-        <a class="nav-profile__menu-item" role="menuitem" href="profile.html">Profile</a>
-        <a class="nav-profile__menu-item" role="menuitem" href="settings.html">Settings</a>
-        ${shortcut ? `<a class="nav-profile__menu-item" role="menuitem" href="${shortcut.href}">${escapeHtml(shortcut.label)}</a>` : ""}
+        <a class="nav-profile__menu-item" role="menuitem" href="${toPage(ROLE_DASHBOARDS[user.role])}">Dashboard</a>
+        <a class="nav-profile__menu-item" role="menuitem" href="${toPage("profile.html")}">Profile</a>
+        <a class="nav-profile__menu-item" role="menuitem" href="${toPage("settings.html")}">Settings</a>
+        ${shortcut ? `<a class="nav-profile__menu-item" role="menuitem" href="${toPage(shortcut.href)}">${escapeHtml(shortcut.label)}</a>` : ""}
         <button type="button" class="nav-profile__menu-item nav-profile__menu-item--btn" role="menuitem" id="nav-signout-btn">Sign Out</button>
       </div>
     </div>

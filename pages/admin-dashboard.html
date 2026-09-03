@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgriBida — Profile</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <title>AgriBida — Administrator Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
   <!-- Shared header: app name -->
@@ -22,23 +22,19 @@
     </div>
   </nav>
 
-  <main class="site-main" id="main-content">
+  <main class="site-main site-main--wide" id="main-content">
     <div class="page">
       <div class="page-header">
         <div>
-          <h2>Profile</h2>
-          <p class="page-subtitle">Your account details and sample credibility record.</p>
+          <h2>Administrator Dashboard</h2>
+          <p class="page-subtitle">A summary of the sample buyer population and produce listings.</p>
         </div>
+        <a href="admin-buyers.html" class="btn btn--primary">Manage Buyers</a>
       </div>
 
-      <section class="page-section" aria-labelledby="account-heading">
-        <h3 id="account-heading">Account</h3>
-        <div class="card profile-summary" id="profile-account-card"></div>
-      </section>
-
-      <section class="page-section" id="profile-role-section" aria-labelledby="role-heading" hidden>
-        <h3 id="role-heading"></h3>
-        <div class="card profile-summary" id="profile-role-card"></div>
+      <section class="page-section" aria-labelledby="stats-heading">
+        <h3 id="stats-heading">Overview</h3>
+        <div class="card-grid card-grid--stats" id="admin-stats-container"></div>
       </section>
     </div>
   </main>
@@ -48,10 +44,10 @@
     <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
   </footer>
 
-  <script src="js/data.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/profile.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/script.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/admin.js"></script>
 </body>
 </html>
