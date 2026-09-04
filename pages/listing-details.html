@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriBida — Listing Details</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <!-- Shared header: app name -->
+  <header class="site-header">
+    <div class="site-header__bar">
+      <h1 class="site-header__title">AgriBida</h1>
+      <p class="site-header__tagline">Produce bidding &amp; price transparency for Filipino farmers</p>
+    </div>
+  </header>
+
+  <!-- Shared navigation area: populated by renderSiteNav() in js/script.js -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="site-nav__content" id="site-nav-content">
+      <p class="site-nav__placeholder">Navigation appears here after you sign in.</p>
+    </div>
+  </nav>
+
+  <main class="site-main site-main--wide" id="main-content">
+    <div class="page">
+      <a href="farmer-dashboard.html" class="back-link" id="listing-back-link">&larr; Back to Dashboard</a>
+
+      <div class="page-header">
+        <div>
+          <h2 id="listing-title">Listing</h2>
+          <p class="page-subtitle" id="listing-subtitle"></p>
+        </div>
+        <span class="status-badge" id="listing-status-badge"></span>
+      </div>
+
+      <section class="page-section">
+        <div class="card">
+          <dl class="detail-grid" id="listing-detail-grid"></dl>
+        </div>
+        <p class="detail-actions" id="listing-farmer-actions">
+          <a href="listing-form.html" id="listing-edit-link" class="btn btn--secondary btn--small">Edit Listing</a>
+        </p>
+      </section>
+
+      <section class="page-section" aria-labelledby="photos-heading">
+        <h3 id="photos-heading">Photos</h3>
+        <div id="listing-images-gallery"></div>
+      </section>
+
+      <section class="page-section" aria-labelledby="bids-heading" id="farmer-bids-section">
+        <h3 id="bids-heading">Bids Received</h3>
+        <div class="card" id="listing-price-summary-container"></div>
+        <div id="bids-list-container"></div>
+      </section>
+
+      <section class="page-section" aria-labelledby="buyer-bid-heading" id="buyer-bid-section" hidden>
+        <h3 id="buyer-bid-heading">Your Bid</h3>
+        <div id="buyer-bid-container"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer / notification area -->
+  <footer class="site-footer">
+    <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
+  </footer>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/script.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/farmer.js"></script>
+  <script src="../js/buyer.js"></script>
+</body>
+</html>

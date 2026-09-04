@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriBida — Administrator Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <!-- Shared header: app name -->
+  <header class="site-header">
+    <div class="site-header__bar">
+      <h1 class="site-header__title">AgriBida</h1>
+      <p class="site-header__tagline">Produce bidding &amp; price transparency for Filipino farmers</p>
+    </div>
+  </header>
+
+  <!-- Shared navigation area: populated by renderSiteNav() in js/script.js -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="site-nav__content" id="site-nav-content">
+      <p class="site-nav__placeholder">Navigation appears here after you sign in.</p>
+    </div>
+  </nav>
+
+  <main class="site-main site-main--wide" id="main-content">
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h2>Administrator Dashboard</h2>
+          <p class="page-subtitle">A summary of the sample buyer population and produce listings.</p>
+        </div>
+        <a href="admin-buyers.html" class="btn btn--primary">Manage Buyers</a>
+      </div>
+
+      <section class="page-section" aria-labelledby="stats-heading">
+        <h3 id="stats-heading">Overview</h3>
+        <div class="card-grid card-grid--stats" id="admin-stats-container"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer / notification area -->
+  <footer class="site-footer">
+    <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
+  </footer>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/script.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

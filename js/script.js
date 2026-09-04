@@ -17,6 +17,21 @@ const ROLE_DASHBOARDS = {
   administrator: "admin-dashboard.html",
 };
 
+// A single role-specific quick link shown in the profile dropdown, alongside the
+// pages every role gets (Dashboard, Profile, Settings, Sign Out).
+const ROLE_SHORTCUTS = {
+  farmer: { label: "My Listings", href: "farmer-dashboard.html" },
+  buyer: { label: "My Bids", href: "my-bids.html" },
+  administrator: { label: "Manage Buyers", href: "admin-buyers.html" },
+};
+
+// All dashboard/profile/settings/etc. pages live in pages/; only index.html sits at
+// the site root. These helpers let shared code (routing, nav links) resolve the right
+// relative path regardless of which depth the current page is running from.
+const IS_ROOT = !location.pathname.includes("/pages/");
+const toPage = (file) => (IS_ROOT ? `pages/${file}` : file);
+const toRoot = (file) => (IS_ROOT ? file : `../${file}`);
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Maps registration field names to their input element ids.
@@ -196,6 +211,10 @@ function createAccount(values) {
       rating: 0,
       reviewCount: 0,
       feedback: [],
+      verificationDocument: null,
+      verificationSubmittedAt: null,
+      verificationRequestReason: null,
+      verificationNote: null,
     });
   }
 
@@ -243,16 +262,13 @@ function handleRegisterSubmit(event) {
 // ---------- RBAC routing ----------
 
 // RBAC entry point: stores the signed-in user, then routes to the role's dashboard.
-// The farmer dashboard exists, so farmer sign-ins navigate there directly. Buyer and
-// Administrator dashboards aren't built yet, so those roles still just confirm sign-in
-// and name the future destination.
 function routeToDashboard(user) {
-  if (user.role === "farmer") {
-    window.location.href = ROLE_DASHBOARDS.farmer;
+  if (user.role === "farmer" || user.role === "buyer" || user.role === "administrator") {
+    window.location.href = toPage(ROLE_DASHBOARDS[user.role]);
     return;
   }
 
-  const destination = ROLE_DASHBOARDS[user.role];
+  const destination = toPage(ROLE_DASHBOARDS[user.role]);
   showNotification(
     `Welcome, ${user.name}. You're signed in as ${ROLE_LABELS[user.role]}. ` +
       `(The ${ROLE_LABELS[user.role]} dashboard isn't built yet — it will open ${destination}.)`
@@ -265,7 +281,19 @@ function routeToDashboard(user) {
 function requireRole(expectedRole) {
   const user = getCurrentUser();
   if (!user || user.role !== expectedRole) {
-    window.location.href = "index.html";
+    window.location.href = toRoot("index.html");
+    return null;
+  }
+  return user;
+}
+
+// Route guard for pages shared by more than one role (e.g. listing-details.html):
+// redirects to the sign-in page and returns null when no user is signed in or the
+// signed-in user's role isn't in expectedRoles; otherwise returns the signed-in user.
+function requireAnyRole(expectedRoles) {
+  const user = getCurrentUser();
+  if (!user || !expectedRoles.includes(user.role)) {
+    window.location.href = toRoot("index.html");
     return null;
   }
   return user;
@@ -275,11 +303,19 @@ function requireRole(expectedRole) {
 
 function handleSignOut() {
   clearCurrentUser();
-  window.location.href = "index.html";
+  window.location.href = toRoot("index.html");
 }
 
-// Fills the shared nav bar with the signed-in user's name/role, a dashboard link, and
-// a Sign Out action. Falls back to the placeholder text when no one is signed in.
+// Builds the initials shown on the profile avatar, e.g. "Metro Fresh Produce" -> "MF".
+function getInitials(name) {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  const initials = words.slice(0, 2).map((word) => word[0].toUpperCase());
+  return initials.join("") || "?";
+}
+
+// Fills the shared nav bar with a profile avatar for the signed-in user. Clicking the
+// avatar opens a dropdown with Dashboard/Profile/Settings/a role shortcut/Sign Out.
+// Falls back to the placeholder text when no one is signed in.
 function renderSiteNav() {
   const container = document.getElementById("site-nav-content");
   if (!container) return;
@@ -290,24 +326,64 @@ function renderSiteNav() {
     return;
   }
 
-  container.innerHTML = "";
+  const shortcut = ROLE_SHORTCUTS[user.role];
 
-  const info = document.createElement("span");
-  info.className = "site-nav__user";
-  info.textContent = `${user.name} · ${ROLE_LABELS[user.role]}`;
+  container.innerHTML = `
+    <div class="nav-profile">
+      <button type="button" class="nav-profile__trigger" id="nav-profile-trigger" aria-haspopup="true" aria-expanded="false">
+        <span class="nav-profile__avatar" aria-hidden="true">${escapeHtml(getInitials(user.name))}</span>
+        <span class="nav-profile__name">${escapeHtml(user.name)}</span>
+      </button>
+      <div class="nav-profile__menu" id="nav-profile-menu" role="menu" hidden>
+        <p class="nav-profile__menu-heading">${escapeHtml(user.name)} &middot; ${escapeHtml(ROLE_LABELS[user.role])}</p>
+        <a class="nav-profile__menu-item" role="menuitem" href="${toPage(ROLE_DASHBOARDS[user.role])}">Dashboard</a>
+        <a class="nav-profile__menu-item" role="menuitem" href="${toPage("profile.html")}">Profile</a>
+        <a class="nav-profile__menu-item" role="menuitem" href="${toPage("settings.html")}">Settings</a>
+        ${shortcut ? `<a class="nav-profile__menu-item" role="menuitem" href="${toPage(shortcut.href)}">${escapeHtml(shortcut.label)}</a>` : ""}
+        <button type="button" class="nav-profile__menu-item nav-profile__menu-item--btn" role="menuitem" id="nav-signout-btn">Sign Out</button>
+      </div>
+    </div>
+  `;
 
-  const dashboardLink = document.createElement("a");
-  dashboardLink.className = "site-nav__link";
-  dashboardLink.href = ROLE_DASHBOARDS[user.role];
-  dashboardLink.textContent = "Dashboard";
+  document.getElementById("nav-signout-btn").addEventListener("click", handleSignOut);
+  initNavProfileDropdown();
+}
 
-  const signOutBtn = document.createElement("button");
-  signOutBtn.type = "button";
-  signOutBtn.className = "link-btn site-nav__signout";
-  signOutBtn.textContent = "Sign Out";
-  signOutBtn.addEventListener("click", handleSignOut);
+// Wires the avatar button to open/close its dropdown: toggle on click, close on
+// outside click or Escape.
+function initNavProfileDropdown() {
+  const trigger = document.getElementById("nav-profile-trigger");
+  const menu = document.getElementById("nav-profile-menu");
+  if (!trigger || !menu) return;
 
-  container.append(info, dashboardLink, signOutBtn);
+  const closeMenu = () => {
+    menu.hidden = true;
+    trigger.setAttribute("aria-expanded", "false");
+  };
+
+  trigger.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const isOpen = !menu.hidden;
+    if (isOpen) {
+      closeMenu();
+    } else {
+      menu.hidden = false;
+      trigger.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!menu.hidden && !menu.contains(event.target) && event.target !== trigger) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !menu.hidden) {
+      closeMenu();
+      trigger.focus();
+    }
+  });
 }
 
 // ---------- Page init ----------

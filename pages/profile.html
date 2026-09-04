@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AgriBida — Listing Details</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <title>AgriBida — Profile</title>
+  <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
   <!-- Shared header: app name -->
@@ -22,30 +22,23 @@
     </div>
   </nav>
 
-  <main class="site-main site-main--wide" id="main-content">
+  <main class="site-main" id="main-content">
     <div class="page">
-      <a href="farmer-dashboard.html" class="back-link">&larr; Back to Dashboard</a>
-
       <div class="page-header">
         <div>
-          <h2 id="listing-title">Listing</h2>
-          <p class="page-subtitle" id="listing-subtitle"></p>
+          <h2>Profile</h2>
+          <p class="page-subtitle">Your account details and sample credibility record.</p>
         </div>
-        <span class="status-badge" id="listing-status-badge"></span>
       </div>
 
-      <section class="page-section">
-        <div class="card">
-          <dl class="detail-grid" id="listing-detail-grid"></dl>
-        </div>
-        <p class="detail-actions">
-          <a href="listing-form.html" id="listing-edit-link" class="btn btn--secondary btn--small">Edit Listing</a>
-        </p>
+      <section class="page-section" aria-labelledby="account-heading">
+        <h3 id="account-heading">Account</h3>
+        <div class="card profile-summary" id="profile-account-card"></div>
       </section>
 
-      <section class="page-section" aria-labelledby="bids-heading">
-        <h3 id="bids-heading">Bids Received</h3>
-        <div id="bids-list-container"></div>
+      <section class="page-section" id="profile-role-section" aria-labelledby="role-heading" hidden>
+        <h3 id="role-heading"></h3>
+        <div class="card profile-summary" id="profile-role-card"></div>
       </section>
     </div>
   </main>
@@ -55,9 +48,10 @@
     <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
   </footer>
 
-  <script src="js/data.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/farmer.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/script.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/profile.js"></script>
 </body>
 </html>

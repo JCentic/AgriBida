@@ -1,6 +1,8 @@
 // farmer.js
 // Farmer-facing page logic: dashboard, create/edit listing form, and listing detail
-// (bids received). Shared auth/storage/nav logic stays in script.js and storage.js.
+// (bids received). Shared auth/storage/nav logic stays in script.js and storage.js;
+// shared formatting and listing/bid-card/photo markup shared with buyer.js lives in
+// ui.js and is reused here as-is.
 
 // Maps listing form field names to their input element ids.
 const LISTING_FIELD_IDS = {
@@ -12,37 +14,15 @@ const LISTING_FIELD_IDS = {
   availabilityDate: "listing-date",
 };
 
-// ---------- Small shared formatting helpers ----------
+// ---------- Listing photos (optional, up to MAX_LISTING_IMAGES) ----------
+// Stored as base64 data URLs in local storage since there is no server to upload to;
+// each photo is downscaled/compressed client-side first to stay well under the
+// browser's local storage quota. MAX_LISTING_IMAGES and readAndResizeImage() are
+// defined in ui.js, shared with the gallery/carousel threshold and the buyer
+// verification document upload there.
 
-function escapeHtml(value) {
-  const div = document.createElement("div");
-  div.textContent = String(value);
-  return div.innerHTML;
-}
-
-function formatCurrency(amount) {
-  return `₱${Number(amount).toLocaleString("en-PH", { maximumFractionDigits: 2 })}`;
-}
-
-// Formats a full ISO timestamp (e.g. a bid's submittedAt).
-function formatDateTime(isoString) {
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return isoString;
-  return date.toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" });
-}
-
-// Formats a plain "YYYY-MM-DD" date without shifting by timezone.
-function formatDateOnly(isoDate) {
-  const [year, month, day] = isoDate.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
-  return date.toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" });
-}
-
-function statusBadgeClass(status) {
-  if (status === "Open") return "status-badge--open";
-  if (status === "Selected") return "status-badge--selected";
-  return "status-badge--closed";
-}
+// The photos currently attached to the listing form, in memory until the form saves.
+let listingImages = [];
 
 // ---------- Farmer Dashboard ----------
 
@@ -71,18 +51,12 @@ function renderFarmerListings(user) {
 
   container.innerHTML = "";
   listings.forEach((listing) => {
-    const card = document.createElement("article");
-    card.className = "card listing-card";
-    card.innerHTML = `
-      <div class="listing-card__title-row">
-        <h4 class="listing-card__title">${escapeHtml(listing.produceName)}</h4>
-        <span class="status-badge ${statusBadgeClass(listing.status)}">${escapeHtml(listing.status)}</span>
-      </div>
-      <p class="listing-card__meta">${listing.quantity} ${escapeHtml(listing.unit)} &middot; ${escapeHtml(listing.location)}</p>
-      <p class="listing-card__meta">Preferred price: ${formatCurrency(listing.preferredPrice)} / ${escapeHtml(listing.unit)}</p>
-      <a class="listing-card__link" href="listing-details.html?id=${encodeURIComponent(listing.id)}">View bids &rarr;</a>
-    `;
-    container.appendChild(card);
+    container.appendChild(
+      buildListingCard(listing, {
+        linkHref: `listing-details.html?id=${encodeURIComponent(listing.id)}`,
+        linkText: "View bids",
+      })
+    );
   });
 }
 
@@ -197,6 +171,71 @@ function validateListingForm(values) {
   return errors;
 }
 
+function renderImagePreviews() {
+  const container = document.getElementById("listing-images-preview");
+  const input = document.getElementById("listing-images-input");
+  const label = document.querySelector('label[for="listing-images-input"]');
+  const count = document.getElementById("listing-images-count");
+  if (!container || !input) return;
+
+  container.innerHTML = "";
+  listingImages.forEach((src, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "image-preview";
+
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = `Photo ${index + 1}`;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "image-preview__remove";
+    removeBtn.setAttribute("aria-label", `Remove photo ${index + 1}`);
+    removeBtn.textContent = "×";
+    removeBtn.addEventListener("click", () => {
+      listingImages.splice(index, 1);
+      renderImagePreviews();
+    });
+
+    wrapper.append(img, removeBtn);
+    container.appendChild(wrapper);
+  });
+
+  const atMax = listingImages.length >= MAX_LISTING_IMAGES;
+  input.disabled = atMax;
+  if (label) label.classList.toggle("is-disabled", atMax);
+  if (count) count.textContent = `${listingImages.length}/${MAX_LISTING_IMAGES} photos added`;
+}
+
+async function handleImagesSelected(event) {
+  const files = Array.from(event.target.files || []);
+  const errorEl = document.getElementById("listing-images-error");
+  errorEl.textContent = "";
+  if (files.length === 0) return;
+
+  const remainingSlots = MAX_LISTING_IMAGES - listingImages.length;
+  const filesToAdd = files.slice(0, remainingSlots);
+  if (files.length > filesToAdd.length) {
+    errorEl.textContent = `Only ${MAX_LISTING_IMAGES} photos are allowed; the rest were not added.`;
+  }
+
+  for (const file of filesToAdd) {
+    if (!file.type.startsWith("image/")) {
+      errorEl.textContent = "Only image files can be added.";
+      continue;
+    }
+    try {
+      const dataUrl = await readAndResizeImage(file);
+      listingImages.push(dataUrl);
+    } catch (error) {
+      errorEl.textContent = "One of the selected photos could not be added.";
+    }
+  }
+
+  event.target.value = "";
+  renderImagePreviews();
+}
+
 function populateListingForm(listing) {
   document.getElementById("listing-produce-name").value = listing.produceName;
   document.getElementById("listing-quantity").value = listing.quantity;
@@ -247,6 +286,7 @@ function handleListingFormSubmit(event, user, editingListing) {
       location,
       preferredPrice,
       availabilityDate: values.availabilityDate,
+      images: [...listingImages],
     };
     saveListings(listings);
     window.location.href = `listing-details.html?id=${encodeURIComponent(editingListing.id)}&saved=1`;
@@ -264,6 +304,7 @@ function handleListingFormSubmit(event, user, editingListing) {
     availabilityDate: values.availabilityDate,
     status: "Open",
     selectedBidId: null,
+    images: [...listingImages],
   };
   listings.push(newListing);
   saveListings(listings);
@@ -281,6 +322,8 @@ function initListingForm() {
   const listingId = params.get("id");
   let editingListing = null;
 
+  listingImages = [];
+
   if (listingId) {
     const listing = getListings().find((item) => item.id === listingId);
     if (!listing || listing.farmerId !== user.profileId) {
@@ -288,6 +331,7 @@ function initListingForm() {
       return;
     }
     editingListing = listing;
+    listingImages = [...(listing.images || [])];
 
     document.getElementById("form-heading").textContent = "Edit Produce Listing";
     document.getElementById("form-subtitle").textContent = "Update the details below.";
@@ -295,44 +339,78 @@ function initListingForm() {
     populateListingForm(editingListing);
   }
 
+  document.getElementById("listing-images-input").addEventListener("change", handleImagesSelected);
+  renderImagePreviews();
+
   form.addEventListener("submit", (event) => handleListingFormSubmit(event, user, editingListing));
 }
 
 // ---------- Listing Detail — bids received ----------
+// renderListingDetail / renderListingImages (shared with buyer.js) live in ui.js.
 
-function renderListingDetail(listing) {
-  document.getElementById("listing-title").textContent = listing.produceName;
-  document.getElementById("listing-subtitle").textContent =
-    `${listing.quantity} ${listing.unit} available in ${listing.location}`;
+// verificationBadgeModifier() lives in ui.js (shared with profile.js).
 
-  const badge = document.getElementById("listing-status-badge");
-  badge.textContent = listing.status;
-  badge.className = `status-badge ${statusBadgeClass(listing.status)}`;
+function buildBuyerCredibilityHTML(profile) {
+  if (!profile) return "";
+  const feedbackItems = (profile.feedback || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+  return `
+    <div class="bid-card__credibility">
+      <span class="verification-badge ${verificationBadgeModifier(profile.verificationStatus)}">${escapeHtml(profile.verificationStatus)}</span>
+      <span class="bid-card__rating">${profile.rating.toFixed(1)} &#9733; (${profile.reviewCount} review${profile.reviewCount === 1 ? "" : "s"})</span>
+      ${feedbackItems ? `<ul class="bid-card__feedback">${feedbackItems}</ul>` : ""}
+    </div>
+  `;
+}
 
-  const editLink = document.getElementById("listing-edit-link");
-  if (editLink) editLink.href = `listing-form.html?id=${encodeURIComponent(listing.id)}`;
+// Renders the listing's sample market-price range once, above the bid list, next to
+// the farmer's own preferred price (FR-10's "one view" requirement). Prefers a record
+// matching both produce and location, falling back to a produce-only match.
+function renderListingPriceSummary(listing) {
+  const container = document.getElementById("listing-price-summary-container");
+  if (!container) return;
 
-  const grid = document.getElementById("listing-detail-grid");
-  const items = [
-    ["Produce", listing.produceName],
-    ["Quantity", `${listing.quantity} ${listing.unit}`],
-    ["Location", listing.location],
-    ["Preferred price", `${formatCurrency(listing.preferredPrice)} / ${listing.unit}`],
-    ["Availability date", formatDateOnly(listing.availabilityDate)],
-    ["Status", listing.status],
-  ];
+  const records = getMarketPriceRecords().filter((record) => record.produceName === listing.produceName);
+  const record = records.find((item) => item.location === listing.location) || records[0];
 
-  grid.innerHTML = "";
-  items.forEach(([label, value]) => {
-    const item = document.createElement("div");
-    item.className = "detail-item";
-    const dt = document.createElement("dt");
-    dt.textContent = label;
-    const dd = document.createElement("dd");
-    dd.textContent = value;
-    item.append(dt, dd);
-    grid.appendChild(item);
+  if (!record) {
+    container.innerHTML = '<p class="empty-state">No sample market-price data is available for this produce yet.</p>';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="price-summary-row">
+      <span class="price-summary-row__produce">Your preferred price</span>
+      <span class="price-summary-row__range">${formatCurrency(listing.preferredPrice)} / ${escapeHtml(listing.unit)}</span>
+    </div>
+    <div class="price-summary-row">
+      <span class="price-summary-row__produce">Sample market price &middot; ${escapeHtml(record.location)}</span>
+      <span class="price-summary-row__range">Low ${formatCurrency(record.lowPrice)} &middot; Avg ${formatCurrency(record.averagePrice)} &middot; High ${formatCurrency(record.highPrice)} / ${escapeHtml(record.unit)}</span>
+    </div>
+  `;
+}
+
+function handleSelectBid(listing, bid) {
+  const confirmed = window.confirm(
+    `Select this bid (${formatCurrency(bid.offeredPrice)} / ${listing.unit})? This can't be undone from here.`
+  );
+  if (!confirmed) return;
+
+  const bids = getBids();
+  bids.forEach((item) => {
+    if (item.listingId !== listing.id) return;
+    item.status = item.id === bid.id ? "Selected" : "Not Selected";
   });
+  saveBids(bids);
+
+  const listings = getListings();
+  const listingIndex = listings.findIndex((item) => item.id === listing.id);
+  listings[listingIndex] = { ...listings[listingIndex], status: "Selected", selectedBidId: bid.id };
+  saveListings(listings);
+
+  const updatedListing = listings[listingIndex];
+  renderListingDetail(updatedListing);
+  renderListingBids(updatedListing);
+  showNotification("Bid selected. The listing is now marked Selected.");
 }
 
 function renderListingBids(listing) {
@@ -353,37 +431,73 @@ function renderListingBids(listing) {
     const buyer = buyerProfiles.find((profile) => profile.id === bid.buyerId);
     const card = document.createElement("article");
     card.className = "card bid-card";
-    card.innerHTML = `
-      <div class="bid-card__header">
-        <h4 class="bid-card__buyer">${escapeHtml(buyer ? buyer.businessName : "Unknown buyer")}</h4>
-        <span class="bid-card__price">${formatCurrency(bid.offeredPrice)} / ${escapeHtml(listing.unit)}</span>
-      </div>
-      <p class="bid-card__meta">Requested quantity: ${bid.requestedQuantity} ${escapeHtml(listing.unit)} &middot; Submitted ${formatDateTime(bid.submittedAt)} &middot; Status: ${escapeHtml(bid.status)}</p>
-      ${bid.message ? `<p class="bid-card__message">&ldquo;${escapeHtml(bid.message)}&rdquo;</p>` : ""}
-    `;
+    card.innerHTML =
+      buildBidCardHTML(buyer ? buyer.businessName : "Unknown buyer", bid, listing.unit) +
+      buildBuyerCredibilityHTML(buyer);
+
+    if (listing.status === "Open" && bid.status === "Pending") {
+      const actions = document.createElement("p");
+      actions.className = "bid-card__actions";
+      const selectBtn = document.createElement("button");
+      selectBtn.type = "button";
+      selectBtn.className = "btn btn--primary btn--small";
+      selectBtn.textContent = "Select Bid";
+      selectBtn.addEventListener("click", () => handleSelectBid(listing, bid));
+      actions.appendChild(selectBtn);
+      card.appendChild(actions);
+    }
+
     container.appendChild(card);
   });
 }
 
 function initListingDetails() {
-  const user = requireRole("farmer");
+  const user = requireAnyRole(["farmer", "buyer"]);
   if (!user) return;
 
   const params = new URLSearchParams(window.location.search);
   const listingId = params.get("id");
   const listing = getListings().find((item) => item.id === listingId);
 
-  if (!listing || listing.farmerId !== user.profileId) {
-    window.location.href = "farmer-dashboard.html";
+  if (user.role === "farmer") {
+    if (!listing || listing.farmerId !== user.profileId) {
+      window.location.href = "farmer-dashboard.html";
+      return;
+    }
+
+    if (params.get("saved") === "1") {
+      showNotification("Listing changes saved.");
+    }
+
+    renderListingDetail(listing);
+    renderListingImages(listing);
+    renderListingPriceSummary(listing);
+    renderListingBids(listing);
     return;
   }
 
-  if (params.get("saved") === "1") {
-    showNotification("Listing changes saved.");
+  // Buyer branch: any signed-in buyer may view any listing, with no ownership check,
+  // and sees only their own bid relationship to it rather than the farmer's full list.
+  if (!listing) {
+    window.location.href = "buyer-dashboard.html";
+    return;
+  }
+
+  document.getElementById("listing-back-link").href = "buyer-dashboard.html";
+  document.getElementById("listing-farmer-actions").hidden = true;
+  document.getElementById("farmer-bids-section").hidden = true;
+  document.getElementById("buyer-bid-section").hidden = false;
+
+  if (params.get("bidSaved") === "1") {
+    showNotification("Your bid has been saved.");
+  }
+  if (params.get("blocked") === "notopen") {
+    showNotification("This listing is no longer open, so bids can't be submitted or changed.");
   }
 
   renderListingDetail(listing);
-  renderListingBids(listing);
+  renderListingImages(listing);
+  renderBuyerBidSection(user, listing);
 }
 
 // ---------- Page init ----------

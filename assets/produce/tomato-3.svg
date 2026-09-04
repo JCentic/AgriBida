@@ -1,0 +1,13 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample close-up photo of a tomato">
+  <rect width="400" height="300" rx="24" fill="#f7ede0"/>
+  <ellipse cx="200" cy="155" rx="118" ry="108" fill="#e0432b"/>
+  <ellipse cx="160" cy="112" rx="38" ry="26" fill="#f0806a" opacity="0.5"/>
+  <g transform="translate(200,52)">
+    <ellipse rx="19" ry="10" fill="#4c8c4c" transform="rotate(0)"/>
+    <ellipse rx="19" ry="10" fill="#4c8c4c" transform="rotate(72)"/>
+    <ellipse rx="19" ry="10" fill="#4c8c4c" transform="rotate(144)"/>
+    <ellipse rx="19" ry="10" fill="#4c8c4c" transform="rotate(216)"/>
+    <ellipse rx="19" ry="10" fill="#4c8c4c" transform="rotate(288)"/>
+    <circle r="9" fill="#3a6b3a"/>
+  </g>
+</svg>

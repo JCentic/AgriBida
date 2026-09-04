@@ -86,29 +86,89 @@ label:focus-within {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.35rem 1rem;
 }
 
-.site-nav__user {
+/* ---------- Profile avatar & dropdown (shared nav) ---------- */
+.nav-profile {
+  position: relative;
+}
+
+.nav-profile__trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  padding: 0.25rem 0.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.nav-profile__trigger:hover {
+  background-color: #f5f5f7;
+}
+
+.nav-profile__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #2e7d32;
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.nav-profile__name {
   font-size: 0.9rem;
   font-weight: 600;
   color: #1d1d1f;
-  margin-right: auto;
 }
 
-.site-nav__link {
+.nav-profile__menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  min-width: 200px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 0.5rem;
+  z-index: 20;
+}
+
+.nav-profile__menu-heading {
+  margin: 0.25rem 0.6rem 0.5rem;
+  font-size: 0.8rem;
+  color: #86868b;
+}
+
+.nav-profile__menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0071e3;
+  color: #1d1d1f;
   text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.site-nav__link:hover {
-  text-decoration: underline;
+.nav-profile__menu-item:hover {
+  background-color: #f5f5f7;
 }
 
-.site-nav__signout {
-  font-size: 0.9rem;
+.nav-profile__menu-item--btn {
+  color: #d70015;
 }
 
 .site-main {
@@ -198,11 +258,27 @@ label:focus-within {
   color: #1d1d1f;
 }
 
+.field--fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.25rem 0;
+}
+
+.field--fieldset legend {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1d1d1f;
+  padding: 0;
+  margin-bottom: 0.4rem;
+}
+
 select,
 input[type="text"],
 input[type="email"],
 input[type="password"],
-input[type="number"] {
+input[type="number"],
+input[type="date"],
+textarea {
   font: inherit;
   font-size: 1rem;
   padding: 0.7rem 0.85rem;
@@ -215,11 +291,18 @@ input[type="number"] {
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
+textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
 select:hover,
 input[type="text"]:hover,
 input[type="email"]:hover,
 input[type="password"]:hover,
-input[type="number"]:hover {
+input[type="number"]:hover,
+input[type="date"]:hover,
+textarea:hover {
   border-color: #86868b;
 }
 
@@ -534,6 +617,51 @@ select[aria-invalid="true"] {
   font-style: italic;
 }
 
+.bid-card__credibility {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eceef0;
+}
+
+.verification-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.verification-badge--verified {
+  background-color: #e6f2ff;
+  color: #004a99;
+}
+
+.verification-badge--pending {
+  background-color: #fff4e0;
+  color: #7a4a00;
+}
+
+.bid-card__rating {
+  font-size: 0.9rem;
+  color: #515154;
+}
+
+.bid-card__feedback {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: #515154;
+}
+
+.bid-card__actions {
+  margin: 0.25rem 0 0 0;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -563,12 +691,269 @@ select[aria-invalid="true"] {
   margin: 1rem 0 0 0;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.field-hint {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.82rem;
+  color: #86868b;
+}
+
+.image-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+#listing-images-input:focus-visible + label {
+  outline: 3px solid #0071e3;
+  outline-offset: 2px;
+}
+
+.image-upload__label.is-disabled {
+  opacity: 0.5;
+}
+
+.image-upload__count {
+  font-size: 0.85rem;
+  color: #86868b;
+}
+
+.image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+.image-preview {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f5f5f7;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image-preview__remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  min-height: 0;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(29, 29, 31, 0.65);
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.image-preview__remove:hover {
+  background-color: rgba(215, 0, 21, 0.85);
+}
+
+.image-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.image-gallery__img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.image-carousel {
+  position: relative;
+}
+
+.image-carousel__track {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  border-radius: 12px;
+  scrollbar-width: none;
+}
+
+.image-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.image-carousel__track:focus-visible {
+  outline: 3px solid #0071e3;
+  outline-offset: 2px;
+}
+
+.image-carousel__slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+}
+
+.image-carousel__slide img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.image-carousel__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  min-height: 0;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(29, 29, 31, 0.55);
+  color: #ffffff;
+  font-size: 1.3rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.image-carousel__nav:hover {
+  background-color: rgba(29, 29, 31, 0.75);
+}
+
+.image-carousel__nav--prev {
+  left: 8px;
+}
+
+.image-carousel__nav--next {
+  right: 8px;
+}
+
+.image-carousel__dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.image-carousel__dot {
+  width: 8px;
+  height: 8px;
+  min-height: 0;
+  border-radius: 50%;
+  border: none;
+  background-color: #d2d2d7;
+  padding: 0;
+  cursor: pointer;
+}
+
+.image-carousel__dot.is-active {
+  background-color: #0071e3;
+}
+
+.listing-card__thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
 .form-card {
   max-width: 520px;
 }
 
 .form-card .field {
   margin-bottom: 1.1rem;
+}
+
+.bid-form-context {
+  margin: 0 0 1.5rem 0;
+  padding: 1rem 1.1rem;
+  background-color: #f5f5f7;
+  border-radius: 12px;
+}
+
+/* ---------- Buyer profile summary (buyer-dashboard.html) ---------- */
+.profile-summary__name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.profile-summary__meta {
+  margin: 0.2rem 0 0 0;
+  color: #515154;
+  font-size: 0.9rem;
+}
+
+.profile-summary__rating {
+  color: #7a4a00;
+  font-weight: 600;
+}
+
+/* ---------- Filter bar (buyer-dashboard.html) ---------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1 1 200px;
+}
+
+.filter-field label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #1d1d1f;
+}
+
+.filter-match-count {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  color: #86868b;
+}
+
+/* ---------- Read-only status note (buyer's bid on a Selected/Closed listing) ---------- */
+.status-note {
+  margin: 0 0 0.75rem 0;
+  color: #515154;
+  font-size: 0.95rem;
 }
 
 .form-actions {
@@ -579,6 +964,198 @@ select[aria-invalid="true"] {
 
 .form-actions .btn {
   flex: 1;
+}
+
+/* ---------- Admin dashboard summary stat cards ---------- */
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-card--highlight {
+  border: 2px solid #0071e3;
+}
+
+.stat-card__value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1d1d1f;
+}
+
+.stat-card__label {
+  margin: 0;
+  color: #515154;
+  font-size: 0.9rem;
+}
+
+.card-grid--stats {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* ---------- Admin buyer verification & reputation management ---------- */
+.admin-buyer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-buyer-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.admin-buyer-card__name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.admin-buyer-card__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Kebab (⋮) status menu: an app-style action menu replacing a plain <select>. */
+.status-menu-wrap {
+  position: relative;
+}
+
+.status-menu-btn {
+  width: 36px;
+  height: 36px;
+  min-height: 0;
+  border: 1px solid #d2d2d7;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: #1d1d1f;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.status-menu-btn:hover {
+  background-color: #f5f5f7;
+}
+
+.status-menu-btn[aria-expanded="true"] {
+  background-color: #eef4ff;
+  border-color: #0071e3;
+}
+
+.status-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 10;
+  min-width: 190px;
+  background-color: #ffffff;
+  border: 1px solid #d2d2d7;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 0.35rem;
+}
+
+.status-menu.is-open {
+  display: block;
+}
+
+.status-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  padding: 0.55rem 0.6rem;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: #1d1d1f;
+  cursor: pointer;
+}
+
+.status-menu__item:hover {
+  background-color: #f5f5f7;
+}
+
+.status-menu__item[aria-checked="true"] {
+  font-weight: 600;
+  color: #0071e3;
+}
+
+.status-menu__item[aria-checked="true"]::before {
+  content: "\2713";
+  color: #0071e3;
+}
+
+.status-menu__item[aria-checked="false"]::before {
+  content: "";
+  width: 1em;
+}
+
+/* Read-only reputation summary: rating/review count/feedback are sample data the
+   administrator reviews here but doesn't edit. */
+.admin-buyer-card__reputation {
+  margin: 0;
+}
+
+.admin-buyer-card__reputation-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.admin-buyer-card__reputation-row dt {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #86868b;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.admin-buyer-card__reputation-row dd {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #1d1d1f;
+}
+
+.admin-buyer-card__feedback-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  color: #515154;
+}
+
+.admin-buyer-card__note {
+  margin-bottom: 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e5ea;
+}
+
+/* Single-slot document preview: shared by the admin's read-only view and the
+   buyer's own verification-request uploader (both reuse .image-preview sizing). */
+.verification-document-preview {
+  width: 160px;
+  max-width: 100%;
+}
+
+.verification-request {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: flex-start;
 }
 
 /* ---------- Tablet and up ---------- */
@@ -606,6 +1183,10 @@ select[aria-invalid="true"] {
 
   .card-grid--listings {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .card-grid--stats {
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .detail-grid {

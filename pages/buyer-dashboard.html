@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriBida — Buyer Dashboard</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <!-- Shared header: app name -->
+  <header class="site-header">
+    <div class="site-header__bar">
+      <h1 class="site-header__title">AgriBida</h1>
+      <p class="site-header__tagline">Produce bidding &amp; price transparency for Filipino farmers</p>
+    </div>
+  </header>
+
+  <!-- Shared navigation area: populated by renderSiteNav() in js/script.js -->
+  <nav class="site-nav" aria-label="Main navigation">
+    <div class="site-nav__content" id="site-nav-content">
+      <p class="site-nav__placeholder">Navigation appears here after you sign in.</p>
+    </div>
+  </nav>
+
+  <main class="site-main site-main--wide" id="main-content">
+    <div class="page">
+      <div class="page-header">
+        <div>
+          <h2>Buyer Dashboard</h2>
+          <p class="page-subtitle">Browse open produce listings and track your bids.</p>
+        </div>
+        <a href="my-bids.html" class="btn btn--primary">My Bids</a>
+      </div>
+
+      <section class="page-section" aria-labelledby="listings-heading">
+        <h3 id="listings-heading">Open Listings</h3>
+
+        <form class="filter-bar" aria-label="Filter open listings">
+          <div class="filter-field">
+            <label for="buyer-filter-produce">Produce type</label>
+            <select id="buyer-filter-produce"></select>
+          </div>
+          <div class="filter-field">
+            <label for="buyer-filter-location">Location</label>
+            <input type="text" id="buyer-filter-location" placeholder="e.g. Nueva Ecija" />
+          </div>
+        </form>
+        <p class="filter-match-count" id="buyer-listings-match-count" aria-live="polite"></p>
+
+        <div class="card-grid card-grid--listings" id="buyer-listings-container"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer / notification area -->
+  <footer class="site-footer">
+    <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
+  </footer>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/script.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/farmer.js"></script>
+  <script src="../js/buyer.js"></script>
+</body>
+</html>

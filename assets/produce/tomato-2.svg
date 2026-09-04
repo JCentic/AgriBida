@@ -1,0 +1,23 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sample photo of tomatoes on a vine">
+  <rect width="400" height="300" rx="24" fill="#fbeee3"/>
+  <path d="M60 70 q140 -30 280 10" fill="none" stroke="#4c8c4c" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="140" cy="150" rx="62" ry="58" fill="#c73522"/>
+  <ellipse cx="118" cy="128" rx="18" ry="13" fill="#ef6a52" opacity="0.55"/>
+  <g transform="translate(140,95)">
+    <ellipse rx="10" ry="6" fill="#4c8c4c" transform="rotate(0)"/>
+    <ellipse rx="10" ry="6" fill="#4c8c4c" transform="rotate(72)"/>
+    <ellipse rx="10" ry="6" fill="#4c8c4c" transform="rotate(144)"/>
+    <ellipse rx="10" ry="6" fill="#4c8c4c" transform="rotate(216)"/>
+    <ellipse rx="10" ry="6" fill="#4c8c4c" transform="rotate(288)"/>
+  </g>
+  <ellipse cx="255" cy="190" rx="80" ry="74" fill="#d63a24"/>
+  <ellipse cx="228" cy="160" rx="24" ry="17" fill="#ef6a52" opacity="0.55"/>
+  <g transform="translate(255,120)">
+    <ellipse rx="13" ry="7" fill="#4c8c4c" transform="rotate(0)"/>
+    <ellipse rx="13" ry="7" fill="#4c8c4c" transform="rotate(72)"/>
+    <ellipse rx="13" ry="7" fill="#4c8c4c" transform="rotate(144)"/>
+    <ellipse rx="13" ry="7" fill="#4c8c4c" transform="rotate(216)"/>
+    <ellipse rx="13" ry="7" fill="#4c8c4c" transform="rotate(288)"/>
+    <circle r="6" fill="#3a6b3a"/>
+  </g>
+</svg>

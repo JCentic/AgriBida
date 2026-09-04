@@ -66,6 +66,10 @@ const SAMPLE_BUYER_PROFILES = [
     rating: 4.6,
     reviewCount: 12,
     feedback: ["Pays on time.", "Clear communication."],
+    verificationDocument: null,
+    verificationSubmittedAt: null,
+    verificationRequestReason: null,
+    verificationNote: null,
   },
   {
     id: "buyer-002",
@@ -75,6 +79,13 @@ const SAMPLE_BUYER_PROFILES = [
     rating: 3.8,
     reviewCount: 5,
     feedback: ["Reasonable offers.", "First-time buyer on the platform."],
+    // Sample placeholder image standing in for an uploaded ID/business-permit photo.
+    verificationDocument:
+      "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
+    verificationSubmittedAt: "2026-08-30T09:00:00",
+    verificationRequestReason:
+      "We're a produce trading business new to AgriBida and would like verified status so farmers can bid with confidence.",
+    verificationNote: null,
   },
 ];
 
@@ -92,6 +103,11 @@ const SAMPLE_PRODUCE_LISTINGS = [
     availabilityDate: "2026-09-10",
     status: "Open",
     selectedBidId: null,
+    images: [
+      "../assets/produce/tomato-1.svg",
+      "../assets/produce/tomato-2.svg",
+      "../assets/produce/tomato-3.svg",
+    ],
   },
   {
     id: "listing-002",
@@ -104,6 +120,11 @@ const SAMPLE_PRODUCE_LISTINGS = [
     availabilityDate: "2026-09-15",
     status: "Open",
     selectedBidId: null,
+    images: [
+      "../assets/produce/eggplant-1.svg",
+      "../assets/produce/eggplant-2.svg",
+      "../assets/produce/eggplant-3.svg",
+    ],
   },
 ];
 
