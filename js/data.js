@@ -68,7 +68,6 @@ const SAMPLE_BUYER_PROFILES = [
     feedback: ["Pays on time.", "Clear communication."],
     verificationDocument: null,
     verificationSubmittedAt: null,
-    verificationRequestReason: null,
     verificationNote: null,
   },
   {
@@ -83,8 +82,6 @@ const SAMPLE_BUYER_PROFILES = [
     verificationDocument:
       "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=",
     verificationSubmittedAt: "2026-08-30T09:00:00",
-    verificationRequestReason:
-      "We're a produce trading business new to AgriBida and would like verified status so farmers can bid with confidence.",
     verificationNote: null,
   },
 ];

@@ -17,11 +17,34 @@ const MAX_LISTING_IMAGES = 3;
 const MAX_IMAGE_DIMENSION = 800;
 const IMAGE_JPEG_QUALITY = 0.72;
 
+// The buyer verification workflow has three effective states even though
+// verificationStatus itself only ever stores "Verified Buyer" or "Pending
+// Verification" (see plans/13) — a buyer submitting a document doesn't change that
+// field, the administrator reviewing it does. buyerTrustState() is the one place that
+// derives the third state ("not-submitted") from verificationDocument, so every
+// caller — the label/badge below, and admin.js's actionable-queue logic — agrees on
+// what "awaiting review" means instead of each re-deriving it independently.
+function buyerTrustState(profile) {
+  if (profile.verificationStatus === "Verified Buyer") return "verified";
+  return profile.verificationDocument ? "awaiting-review" : "not-submitted";
+}
+
 // Verification status gets its own badge, styled distinctly from a bid's own status
 // badge, so a reader never confuses buyer trustworthiness with bid outcome. Shared by
-// farmer.js (buyer credibility on a bid) and profile.js (the buyer's own profile page).
-function verificationBadgeModifier(verificationStatus) {
-  return verificationStatus === "Verified Buyer" ? "verification-badge--verified" : "verification-badge--pending";
+// farmer.js (buyer credibility on a bid), profile.js (the buyer's own profile page),
+// and admin.js (the buyer verification queue).
+function verificationStatusLabel(profile) {
+  const state = buyerTrustState(profile);
+  if (state === "verified") return "Verified Buyer";
+  if (state === "awaiting-review") return "Pending Verification";
+  return "Not Verified";
+}
+
+function verificationBadgeModifier(profile) {
+  const state = buyerTrustState(profile);
+  if (state === "verified") return "verification-badge--verified";
+  if (state === "awaiting-review") return "verification-badge--pending";
+  return "verification-badge--unverified";
 }
 
 function readAndResizeImage(file) {

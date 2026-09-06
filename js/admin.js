@@ -1,8 +1,9 @@
 // admin.js
 // Administrator-facing page logic: dashboard summary and buyer verification &
 // reputation management. Shared auth/storage/nav logic stays in script.js and
-// storage.js; shared formatting and the verification-badge modifier shared with
-// farmer.js live in ui.js / farmer.js and are reused here as-is.
+// storage.js; shared formatting and the verification-status classifier/label/badge
+// modifier (also used by farmer.js and profile.js) live in ui.js and are reused here
+// as-is.
 
 // ---------- Administrator Dashboard ----------
 
@@ -10,15 +11,18 @@ function initAdminDashboard() {
   const user = requireRole("administrator");
   if (!user) return;
 
+  showWelcomeNotificationIfPresent();
+
   renderAdminStats();
 }
 
 function renderAdminStats() {
   const container = document.getElementById("admin-stats-container");
   const buyerProfiles = getBuyerProfiles();
-  const pendingCount = buyerProfiles.filter(
-    (profile) => profile.verificationStatus === "Pending Verification"
-  ).length;
+  // A buyer is only actionable for the administrator once they've actually submitted a
+  // document (buyerTrustState() === "awaiting-review", see ui.js) — a brand-new buyer
+  // who hasn't submitted anything yet has nothing to review yet.
+  const pendingCount = buyerProfiles.filter((profile) => buyerTrustState(profile) === "awaiting-review").length;
 
   const stats = [
     { value: buyerProfiles.length, label: "Total Sample Buyers", highlight: false },
@@ -76,13 +80,17 @@ function initAdminBuyers() {
   renderAdminBuyers();
 }
 
-// Sorts Pending Verification buyers first, since that's the actionable queue.
+// Sorts buyers awaiting review first (the actionable queue), then buyers who haven't
+// submitted anything yet, then already-verified buyers last.
+function buyerQueueRank(profile) {
+  const state = buyerTrustState(profile);
+  if (state === "awaiting-review") return 0;
+  if (state === "not-submitted") return 1;
+  return 2;
+}
+
 function sortedBuyerProfiles() {
-  return [...getBuyerProfiles()].sort((a, b) => {
-    const aPending = a.verificationStatus === "Pending Verification" ? 0 : 1;
-    const bPending = b.verificationStatus === "Pending Verification" ? 0 : 1;
-    return aPending - bPending;
-  });
+  return [...getBuyerProfiles()].sort((a, b) => buyerQueueRank(a) - buyerQueueRank(b));
 }
 
 function renderAdminBuyers() {
@@ -109,7 +117,7 @@ function buildAdminBuyerCard(profile) {
     <div class="admin-buyer-card__header">
       <h4 class="admin-buyer-card__name">${escapeHtml(profile.businessName)}</h4>
       <div class="admin-buyer-card__header-actions">
-        <span class="verification-badge ${verificationBadgeModifier(profile.verificationStatus)}">${escapeHtml(profile.verificationStatus)}</span>
+        <span class="verification-badge ${verificationBadgeModifier(profile)}">${escapeHtml(verificationStatusLabel(profile))}</span>
         <div class="status-menu-wrap">
           <button
             type="button"
@@ -162,9 +170,8 @@ function buildAdminBuyerCard(profile) {
   return card;
 }
 
-// Read-only view of the buyer's submitted mock verification document and their
-// stated reason for requesting verification — administrator review context, no
-// remove control.
+// Read-only view of the buyer's submitted mock verification document —
+// administrator review context, no remove control.
 function buildAdminVerificationDocumentHTML(profile) {
   if (!profile.verificationDocument) {
     return '<p class="status-note">No verification document submitted.</p>';
@@ -175,7 +182,6 @@ function buildAdminVerificationDocumentHTML(profile) {
       <img src="${escapeHtml(profile.verificationDocument)}" alt="${escapeHtml(profile.businessName)}'s submitted verification document" />
     </div>
     <p class="profile-summary__meta">Submitted ${formatDateTime(profile.verificationSubmittedAt)}</p>
-    ${profile.verificationRequestReason ? `<p class="profile-summary__meta">&ldquo;${escapeHtml(profile.verificationRequestReason)}&rdquo;</p>` : ""}
   `;
 }
 
