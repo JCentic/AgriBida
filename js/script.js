@@ -213,7 +213,6 @@ function createAccount(values) {
       feedback: [],
       verificationDocument: null,
       verificationSubmittedAt: null,
-      verificationRequestReason: null,
       verificationNote: null,
     });
   }

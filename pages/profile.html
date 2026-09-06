@@ -32,7 +32,10 @@
       </div>
 
       <section class="page-section" aria-labelledby="account-heading">
-        <h3 id="account-heading">Account</h3>
+        <div class="page-section__header">
+          <h3 id="account-heading">Account</h3>
+          <button type="button" class="btn btn--secondary btn--small" id="profile-account-edit-btn" aria-expanded="false">Edit</button>
+        </div>
         <div class="card profile-summary" id="profile-account-card"></div>
       </section>
 
@@ -47,6 +50,18 @@
   <footer class="site-footer">
     <div id="notification-area" class="notification-area" role="status" aria-live="polite"></div>
   </footer>
+
+  <!-- Buyer verification modal: markup stays static here; js/profile.js fills in
+       #verification-modal-body and calls showModal()/close() when the "Verify
+       Account" / "Update Verification Document" button is clicked. A native <dialog>
+       gets focus trapping, Escape-to-close, and backdrop rendering for free. -->
+  <dialog class="modal" id="verification-modal" aria-labelledby="verification-modal-heading">
+    <div class="modal__header">
+      <h3 id="verification-modal-heading">Verify Account</h3>
+      <button type="button" class="modal__close" id="verification-modal-close-btn" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal__body" id="verification-modal-body"></div>
+  </dialog>
 
   <script src="../js/data.js"></script>
   <script src="../js/storage.js"></script>

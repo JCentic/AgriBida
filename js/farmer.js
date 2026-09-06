@@ -348,14 +348,15 @@ function initListingForm() {
 // ---------- Listing Detail — bids received ----------
 // renderListingDetail / renderListingImages (shared with buyer.js) live in ui.js.
 
-// verificationBadgeModifier() lives in ui.js (shared with profile.js).
+// verificationStatusLabel() / verificationBadgeModifier() live in ui.js (shared with
+// profile.js and admin.js).
 
 function buildBuyerCredibilityHTML(profile) {
   if (!profile) return "";
   const feedbackItems = (profile.feedback || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
   return `
     <div class="bid-card__credibility">
-      <span class="verification-badge ${verificationBadgeModifier(profile.verificationStatus)}">${escapeHtml(profile.verificationStatus)}</span>
+      <span class="verification-badge ${verificationBadgeModifier(profile)}">${escapeHtml(verificationStatusLabel(profile))}</span>
       <span class="bid-card__rating">${profile.rating.toFixed(1)} &#9733; (${profile.reviewCount} review${profile.reviewCount === 1 ? "" : "s"})</span>
       ${feedbackItems ? `<ul class="bid-card__feedback">${feedbackItems}</ul>` : ""}
     </div>
