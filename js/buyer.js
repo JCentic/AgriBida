@@ -17,6 +17,8 @@ function initBuyerDashboard() {
   const user = requireRole("buyer");
   if (!user) return;
 
+  showWelcomeNotificationIfPresent();
+
   const produceSelect = document.getElementById("buyer-filter-produce");
   const locationInput = document.getElementById("buyer-filter-location");
 

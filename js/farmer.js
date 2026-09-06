@@ -30,6 +30,8 @@ function initFarmerDashboard() {
   const user = requireRole("farmer");
   if (!user) return;
 
+  showWelcomeNotificationIfPresent();
+
   const params = new URLSearchParams(window.location.search);
   if (params.get("created") === "1") {
     showNotification("Listing created and published as Open.");
@@ -493,7 +495,7 @@ function initListingDetails() {
     showNotification("Your bid has been saved.");
   }
   if (params.get("blocked") === "notopen") {
-    showNotification("This listing is no longer open, so bids can't be submitted or changed.");
+    showNotification("This listing is no longer open, so bids can't be submitted or changed.", "error");
   }
 
   renderListingDetail(listing);

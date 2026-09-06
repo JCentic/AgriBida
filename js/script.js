@@ -45,11 +45,27 @@ const REGISTER_FIELD_IDS = {
   confirmPassword: "register-confirm-password",
 };
 
-// Shows a short message in the shared footer/notification area.
-function showNotification(message) {
+// Tracks the pending auto-dismiss timer per page so a new message resets the clock
+// instead of being cut off by whichever message showed up first.
+let notificationDismissTimer = null;
+const NOTIFICATION_DISMISS_MS = 5000;
+
+// Shows a short message in the shared fixed-position toast, auto-dismissing it after a
+// few seconds. `type` is "success" (default) or "error" — error messages get a
+// distinct color/icon (via the .notification-area--error modifier) so a blocked or
+// rejected action doesn't look identical to a completed one.
+function showNotification(message, type = "success") {
   const notificationArea = document.getElementById("notification-area");
   if (!notificationArea) return;
+
   notificationArea.textContent = message;
+  notificationArea.classList.toggle("notification-area--error", type === "error");
+
+  if (notificationDismissTimer) clearTimeout(notificationDismissTimer);
+  notificationDismissTimer = setTimeout(() => {
+    notificationArea.textContent = "";
+    notificationDismissTimer = null;
+  }, NOTIFICATION_DISMISS_MS);
 }
 
 // ---------- Field/form error helpers ----------
@@ -140,7 +156,7 @@ function handleSignInSubmit(event) {
   }
 
   setCurrentUser(user);
-  routeToDashboard(user);
+  routeToDashboard(user, "welcome");
 }
 
 // ---------- Registration ----------
@@ -255,15 +271,19 @@ function handleRegisterSubmit(event) {
 
   const newUser = createAccount(values);
   setCurrentUser(newUser);
-  routeToDashboard(newUser);
+  routeToDashboard(newUser, "new");
 }
 
 // ---------- RBAC routing ----------
 
 // RBAC entry point: stores the signed-in user, then routes to the role's dashboard.
-function routeToDashboard(user) {
+// `welcomeFlag` ("welcome" for an ordinary sign-in, "new" for a fresh registration) is
+// appended as a query flag so the dashboard can show a one-time confirmation matching
+// how it got there, following the same redirect-with-a-flag pattern used for listings
+// (`?created=1`) and bids (`?bidSaved=1`).
+function routeToDashboard(user, welcomeFlag) {
   if (user.role === "farmer" || user.role === "buyer" || user.role === "administrator") {
-    window.location.href = toPage(ROLE_DASHBOARDS[user.role]);
+    window.location.href = `${toPage(ROLE_DASHBOARDS[user.role])}?welcome=${welcomeFlag}`;
     return;
   }
 
@@ -298,11 +318,24 @@ function requireAnyRole(expectedRoles) {
   return user;
 }
 
+// Shows the one-time post-redirect confirmation on a dashboard's first load after
+// `routeToDashboard()` appended `?welcome=new` (fresh registration) or
+// `?welcome=welcome` (ordinary sign-in). Shared by every dashboard init function
+// instead of each re-reading the query string itself.
+function showWelcomeNotificationIfPresent() {
+  const welcomeFlag = new URLSearchParams(window.location.search).get("welcome");
+  if (welcomeFlag === "new") {
+    showNotification("Account created. Welcome to AgriBida!");
+  } else if (welcomeFlag === "welcome") {
+    showNotification("Signed in successfully.");
+  }
+}
+
 // ---------- Shared navigation & sign out ----------
 
 function handleSignOut() {
   clearCurrentUser();
-  window.location.href = toRoot("index.html");
+  window.location.href = `${toRoot("index.html")}?signedout=1`;
 }
 
 // Builds the initials shown on the profile avatar, e.g. "Metro Fresh Produce" -> "MF".
@@ -397,6 +430,10 @@ function initAuthPage() {
   document.getElementById("show-register-btn").addEventListener("click", () => setAuthMode("register"));
   document.getElementById("show-signin-btn").addEventListener("click", () => setAuthMode("signin"));
   document.getElementById("register-role").addEventListener("change", handleRegisterRoleChange);
+
+  if (new URLSearchParams(window.location.search).get("signedout") === "1") {
+    showNotification("You've been signed out.");
+  }
 }
 
 // App entry point: seed sample data, then set up the current page.

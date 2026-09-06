@@ -11,6 +11,8 @@ function initAdminDashboard() {
   const user = requireRole("administrator");
   if (!user) return;
 
+  showWelcomeNotificationIfPresent();
+
   renderAdminStats();
 }
 
